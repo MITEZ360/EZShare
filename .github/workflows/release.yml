@@ -102,17 +102,17 @@ jobs:
           test -s "$ANDROID_APK"
           test -s "$MAC_ZIP"
           cp "$ANDROID_APK" "EZShare-${VERSION}-android.apk"
-          cat > /tmp/ez-release-notes.md <<EOF
-EZShare $VERSION — macOS 与 Android 双端发布。
-
-功能：局域网文件/文本共享、访问码、上传与删除开关、Bonjour/mDNS 设备发现。Android 支持加入已运行的共享或启动本机服务。
-
-macOS：下载 EZShare-${VERSION}-macOS-universal.zip，解压后把 EZShare.app 拖入「应用程序」。Intel 与 Apple Silicon 通用。首次打开若被拦截，右键 → 打开。
-
-Android：下载 EZShare-${VERSION}-android.apk 安装，需允许安装未知来源应用。首次启动授权共享目录；常驻通知用于保持后台共享。
-
-访问码可在 App 设置中查看或关闭。
-EOF
+          printf '%s\n' \
+            "EZShare ${VERSION} - macOS and Android" \
+            "" \
+            "Features: LAN file/text sharing, access code, upload/delete toggles, Bonjour/mDNS discovery. Android can join an existing share or start its own service." \
+            "" \
+            "macOS: download EZShare-${VERSION}-macOS-universal.zip, unzip and move EZShare.app to Applications. Universal binary (Intel + Apple Silicon). If macOS blocks first launch, right-click and choose Open." \
+            "" \
+            "Android: install EZShare-${VERSION}-android.apk (allow unknown sources). Grant a shared folder on first launch; a persistent notification keeps sharing alive." \
+            "" \
+            "The access code can be viewed or disabled in the app settings." \
+            > /tmp/ez-release-notes.md
           gh release create "$GITHUB_REF_NAME" \
             --title "EZShare $VERSION" \
             --notes-file /tmp/ez-release-notes.md \
