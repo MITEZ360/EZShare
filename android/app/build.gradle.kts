@@ -48,7 +48,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.compose.animation:animation")
     implementation("com.google.zxing:core:3.5.3")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

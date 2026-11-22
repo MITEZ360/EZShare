@@ -22,7 +22,7 @@ class ShareService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        ShareManager.start()
+        ShareManager.startLocal()
         ShareManager.discovery.refresh()
         return START_STICKY
     }

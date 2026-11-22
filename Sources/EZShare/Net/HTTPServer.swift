@@ -65,6 +65,8 @@ final class HTTPServer {
             var txt = NWTXTRecord()
             txt["name"] = deviceName
             txt["port"] = String(nwPort.rawValue)
+            txt["v"] = "1"
+            txt["code"] = router.snapshot.requireCode ? "1" : "0"
             listener.service = NWListener.Service(
                 name: "\(deviceName)-\(nwPort.rawValue)",
                 type: LANDiscovery.serviceType,

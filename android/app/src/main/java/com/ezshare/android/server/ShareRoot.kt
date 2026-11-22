@@ -10,7 +10,8 @@ data class ShareEntry(
     val relativePath: String,
     val isDirectory: Boolean,
     val size: Long,
-    val modified: Long
+    val modified: Long,
+    val modifiedLabel: String = ""
 )
 
 /// 共享目录（用户通过系统文件授权选择的目录树）的安全访问封装。

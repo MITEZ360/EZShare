@@ -1,6 +1,7 @@
 package com.ezshare.android.server
 
 import android.content.Context
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -74,6 +75,56 @@ class Router(
 
         return when {
             req.path == "/health" -> text("ok")
+
+            req.path == "/api/info" && req.method == "GET" -> {
+                val s = config.settings
+                okJson(
+                    JSONObject()
+                        .put("ok", true)
+                        .put("name", root.displayName)
+                        .put("allowUpload", s.allowUpload)
+                        .put("allowDelete", s.allowDelete)
+                        .put("requireCode", s.requireCode)
+                        .put("version", 1)
+                )
+            }
+
+            req.path == "/api/files" && req.method == "GET" -> {
+                val dir = req.query["path"] ?: ""
+                val s = config.settings
+                val entries = JSONArray()
+                root.list(dir).forEach { entry ->
+                    entries.put(
+                        JSONObject()
+                            .put("name", entry.name)
+                            .put("path", entry.relativePath)
+                            .put("isDirectory", entry.isDirectory)
+                            .put("size", entry.size)
+                            .put("modified", iso(entry.modified))
+                    )
+                }
+                okJson(
+                    JSONObject()
+                        .put("ok", true)
+                        .put("path", dir)
+                        .put("entries", entries)
+                        .put("allowUpload", s.allowUpload)
+                        .put("allowDelete", s.allowDelete)
+                )
+            }
+
+            req.path == "/api/texts" && req.method == "GET" -> {
+                val items = JSONArray()
+                texts.list().forEach { snippet ->
+                    items.put(
+                        JSONObject()
+                            .put("id", snippet.id)
+                            .put("content", snippet.content)
+                            .put("createdAt", iso(snippet.createdAt))
+                    )
+                }
+                okJson(JSONObject().put("ok", true).put("items", items))
+            }
 
             req.path == "/login" && req.method == "POST" -> {
                 val body = readBody(input, req.headers, 4096).toString(Charsets.UTF_8)
@@ -321,6 +372,12 @@ class Router(
             }
         }
         return total
+    }
+
+    private fun iso(timestamp: Long): String = try {
+        java.time.Instant.ofEpochMilli(timestamp).toString()
+    } catch (_: Exception) {
+        ""
     }
 
     private fun formValue(body: String, key: String): String {

@@ -23,6 +23,9 @@ final class Router {
         self.config = config
     }
 
+    /// 供服务发布层读取当前共享配置（Bonjour TXT 需要知道是否启用访问码）。
+    var snapshot: ShareSettings { config.snapshot() }
+
     // MARK: - 入口
 
     func handle(_ request: HTTPRequest) -> HTTPResponse {
@@ -64,11 +67,23 @@ final class Router {
             return handleTextPage(request, settings: settings)
         case "/download":
             return handleDownload(request, settings: settings)
+        case "/api/info":
+            return .json([
+                "ok": true,
+                "name": settings.shareName,
+                "allowUpload": settings.allowUpload,
+                "allowDelete": settings.allowDelete,
+                "requireCode": settings.requireCode,
+                "version": 1
+            ])
+        case "/api/files":
+            return handleFiles(request, settings: settings)
         case "/api/mkdir":
             return handleMkdir(request, settings: settings)
         case "/api/delete":
             return handleDelete(request, settings: settings)
         case "/api/texts":
+            if request.method == "GET" { return handleTextsList() }
             return handleTextCreate(request, settings: settings)
         case "/api/text":
             return handleTextGet(request)
@@ -160,6 +175,39 @@ final class Router {
         let normalized = PathResolver.relativePath(of: target, in: settings.rootURL)
         let html = WebUI.listing(relativePath: normalized, entries: entries, settings: settings)
         return .html(html)
+    }
+
+    /// 供其他端“加入共享”后读取目录内容；与网页列表同源，但返回 JSON。
+    private func handleFiles(_ request: HTTPRequest, settings: ShareSettings) -> HTTPResponse {
+        guard request.method == "GET" else {
+            return .json(["ok": false, "error": "方法不允许"], status: 405)
+        }
+        let relative = (request.query["path"] ?? "").trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        guard let target = PathResolver.resolve(relative, in: settings.rootURL) else {
+            return .json(["ok": false, "error": "路径越界"], status: 403)
+        }
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: target.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            return .json(["ok": false, "error": "目录不存在"], status: 404)
+        }
+        let normalized = PathResolver.relativePath(of: target, in: settings.rootURL)
+        let entries: [[String: Any]] = FileLister.entries(in: target).map { entry in
+            let path = normalized.isEmpty ? entry.name : "\(normalized)/\(entry.name)"
+            return [
+                "name": entry.name,
+                "path": path,
+                "isDirectory": entry.isDirectory,
+                "size": entry.size,
+                "modified": Self.iso8601.string(from: entry.modified)
+            ] as [String: Any]
+        }
+        return .json([
+            "ok": true,
+            "path": normalized,
+            "entries": entries,
+            "allowUpload": settings.allowUpload,
+            "allowDelete": settings.allowDelete
+        ])
     }
 
     private func handleDownload(_ request: HTTPRequest, settings: ShareSettings) -> HTTPResponse {
@@ -255,6 +303,17 @@ final class Router {
         }
         let html = WebUI.textPage(snippets: TextStore.shared.list(), settings: settings)
         return .html(html)
+    }
+
+    private func handleTextsList() -> HTTPResponse {
+        let items: [[String: Any]] = TextStore.shared.list().map { snippet in
+            [
+                "id": snippet.id,
+                "content": snippet.content,
+                "createdAt": Self.iso8601.string(from: snippet.createdAt)
+            ] as [String: Any]
+        }
+        return .json(["ok": true, "items": items])
     }
 
     private func handleTextCreate(_ request: HTTPRequest, settings: ShareSettings) -> HTTPResponse {
