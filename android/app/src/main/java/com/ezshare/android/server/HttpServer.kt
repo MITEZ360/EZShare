@@ -153,7 +153,8 @@ class HttpServer(private val router: Router) {
         for ((key, value) in res.headers) {
             if (key.lowercase() != "content-length") head.append("$key: $value\r\n")
         }
-        head.append("Content-Length: ${res.streamLength.takeIf { it >= 0 } ?: res.body.size}\r\n\r\n")
+        val declaredLength = if (res.streamLength >= 0) res.streamLength else res.body.size.toLong()
+        head.append("Content-Length: $declaredLength\r\n\r\n")
         out.write(head.toString().toByteArray(Charsets.ISO_8859_1))
 
         if (res.body.isNotEmpty()) out.write(res.body)

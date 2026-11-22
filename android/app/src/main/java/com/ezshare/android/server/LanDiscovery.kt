@@ -74,7 +74,7 @@ class LanDiscovery(context: Context) {
             override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {}
 
             override fun onServiceFound(service: NsdServiceInfo) {
-                if (service.serviceType != SERVICE_TYPE) return
+                if (!service.serviceType.startsWith(SERVICE_TYPE)) return
                 manager?.resolveService(service, object : NsdManager.ResolveListener {
                     override fun onResolveFailed(service: NsdServiceInfo, errorCode: Int) {}
                     override fun onServiceResolved(resolved: NsdServiceInfo) {

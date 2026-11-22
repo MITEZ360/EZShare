@@ -221,7 +221,7 @@ fun EZShareScreen() {
                                             .padding(vertical = 8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(if (entry.isDirectory) "📁" else "📄")
+                                        Text(if (entry.isDirectory) "▸" else "·")
                                         Spacer(Modifier.size(8.dp))
                                         Text(entry.name, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
                                         Text(
