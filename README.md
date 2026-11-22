@@ -1,6 +1,6 @@
 # EZShare
 
-macOS 原生局域网文件共享工具。Swift + SwiftUI + Network.framework 实现，零第三方依赖，App 体积约 2 MB。
+局域网文件与文本共享工具，提供 macOS 与 Android 原生客户端。Mac 端用 Swift + SwiftUI + Network.framework，零第三方依赖，App 体积约 2 MB；Android 端用 Kotlin + Compose，纯 Java 网络库手写 HTTP 服务，无服务端框架。两端可通过 Bonjour / mDNS 互相发现。
 
 ## 功能
 
@@ -8,9 +8,11 @@ macOS 原生局域网文件共享工具。Swift + SwiftUI + Network.framework �
 - 文件：目录浏览、下载（支持 Range 断点）、拖拽/多文件上传（带进度）、新建文件夹、删除（进废纸篓，可恢复）
 - 文本：网页端或 Mac 原生界面均可发送；任何设备可查看、一键复制回剪贴板、下载为 .txt；持久化到 Application Support，跨重启保留
 - Mac 原生「共享内容」面板：浏览文件/文本、添加文件（文件选择或拖入）、发送文本、复制、删除
-- 局域网地址自动检测，一键复制 / 打开，二维码供手机扫码
+- 局域网地址自动检测，一键复制 / 打开，二维码供扫码
+- 局域网设备发现：Bonjour / mDNS 发布 `_ezshare._tcp`，启动时自动发现一次 + 手动刷新，Mac 与 Android 互相可见
 - 可选 6 位字母数字混合访问码（Cookie 会话）；上传、删除可独立开关
-- 所有配置持久化到 UserDefaults
+- Android 端：与 Mac 端同等功能（目录授权共享、文件收发、文本收发、访问码、二维码、后台前台服务），网页端复用同一套 CSS/JS
+- 配置持久化：Mac 用 UserDefaults，Android 用 SharedPreferences
 
 ## 构建
 
@@ -23,6 +25,16 @@ open build/EZShare.app
 ```
 
 系统要求：macOS 13+。
+
+## Android 构建（GitHub Actions，无需本地 SDK）
+
+Android 项目在 `android/`，本机不需要安装 Android SDK / Gradle。推送到 `main` 后由 GitHub Actions 自动构建：
+
+- 工作流：`.github/workflows/android.yml`
+- 构建产物：Actions 页面对应运行的 `EZShare-Android` artifact，解压得到 `app-debug.apk`
+- 也可在 Actions 页面点 `Run workflow` 手动触发
+
+首次安装需允许「安装未知来源应用」。Android 端通过系统文件授权（SAF）选择共享目录；为让服务在后台持续运行，会显示常驻通知。
 
 ## 命令行模式
 
@@ -59,10 +71,16 @@ sudo rm /Library/Developer/CommandLineTools/usr/include/swift/module.modulemap
 Sources/EZShare/
 ├── EZShareApp.swift      # App 入口 + headless 模式
 ├── AppModel.swift        # 状态与配置持久化
-├── Core/                 # 路径解析、网卡检测、MIME、文本存储、配置存储
+├── Core/                 # 路径解析、网卡检测、MIME、文本存储、配置存储、Bonjour 发现
 ├── Net/                  # HTTP 服务、路由、网页（内嵌 CSS/JS，无外部资源）
 └── Views/                # SwiftUI 界面
+android/app/src/main/
+├── java/com/ezshare/android/
+│   ├── MainActivity.kt   # Compose 界面
+│   └── server/           # HTTP 服务、路由、SAF 文件访问、NSD 发现、前台服务
+└── assets/               # 与 Mac 端共用的 web.css / web.js
+.github/workflows/android.yml   # 云端构建 APK
 tools/make-icon.swift     # 图标生成器
-scripts/build.sh          # 构建打包脚本
+scripts/build.sh          # Mac 构建打包脚本
 packaging/Info.plist
 ```
