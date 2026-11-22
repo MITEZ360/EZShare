@@ -118,7 +118,17 @@ fun AppRoot() {
     }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
 
-    LaunchedEffect(Unit) { ShareManager.discovery.refresh() }
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= 33) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.NEARBY_WIFI_DEVICES
+                )
+            )
+        }
+        ShareManager.discovery.refresh()
+    }
     LaunchedEffect(state.message) {
         state.message?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()

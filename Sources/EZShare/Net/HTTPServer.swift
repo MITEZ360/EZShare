@@ -67,8 +67,9 @@ final class HTTPServer {
             txt["port"] = String(nwPort.rawValue)
             txt["v"] = "1"
             txt["code"] = router.snapshot.requireCode ? "1" : "0"
+            let serviceName = "\(deviceName)-\(nwPort.rawValue)" + (router.snapshot.requireCode ? "-lock" : "")
             listener.service = NWListener.Service(
-                name: "\(deviceName)-\(nwPort.rawValue)",
+                name: serviceName,
                 type: LANDiscovery.serviceType,
                 domain: "local.",
                 txtRecord: txt

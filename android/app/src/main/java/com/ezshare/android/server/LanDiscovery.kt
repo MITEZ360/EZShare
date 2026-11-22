@@ -30,13 +30,10 @@ class LanDiscovery(context: Context) {
     fun register(port: Int, name: String, requireCode: Boolean = false) {
         unregister()
         val info = NsdServiceInfo().apply {
-            serviceName = name
+            // 访问码标记写进服务名：SDK 的 TXT 属性在不同版本上行为不一致
+            serviceName = if (requireCode) "$name-lock" else name
             serviceType = SERVICE_TYPE
             this.port = port
-            txtRecord = hashMapOf(
-                "name" to name.toByteArray(Charsets.UTF_8),
-                "code" to (if (requireCode) "1" else "0").toByteArray(Charsets.UTF_8)
-            )
         }
         val listener = object : NsdManager.RegistrationListener {
             override fun onServiceRegistered(info: NsdServiceInfo) {}
@@ -83,9 +80,9 @@ class LanDiscovery(context: Context) {
                     override fun onResolveFailed(service: NsdServiceInfo, errorCode: Int) {}
                     override fun onServiceResolved(resolved: NsdServiceInfo) {
                         val address = resolved.host?.hostAddress ?: return
-                        val requiresCode = resolved.txtRecord?.get("code")
-                            ?.let { String(it, Charsets.UTF_8) == "1" } ?: false
-                        val peer = Peer(resolved.serviceName ?: "EZShare", address, resolved.port, requiresCode)
+                        val resolvedName = resolved.serviceName ?: "EZShare"
+                        val requiresCode = resolvedName.endsWith("-lock")
+                        val peer = Peer(resolvedName.removeSuffix("-lock"), address, resolved.port, requiresCode)
                         synchronized(peers) { peers[peer.url] = peer }
                         emit(peers.values.sortedBy { it.name })
                     }

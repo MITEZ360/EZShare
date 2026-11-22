@@ -10,6 +10,7 @@
 - Mac 原生「共享内容」面板：浏览文件/文本、添加文件（文件选择或拖入）、发送文本、复制、删除
 - 局域网地址自动检测，一键复制 / 打开，二维码供扫码
 - 局域网设备发现：Bonjour / mDNS 发布 `_ezshare._tcp`，启动时自动发现一次 + 手动刷新，Mac 与 Android 互相可见
+- 多端协同：Android 启动即扫描局域网设备，可选择「加入」已有共享（通过访问码会话读写远端文件/文本）或启动本机服务；Local / Remote 双模式一键切换
 - 可选 6 位字母数字混合访问码（Cookie 会话）；上传、删除可独立开关
 - Android 端：与 Mac 端同等功能（目录授权共享、文件收发、文本收发、访问码、二维码、后台前台服务），网页端复用同一套 CSS/JS
 - 配置持久化：Mac 用 UserDefaults，Android 用 SharedPreferences
@@ -34,7 +35,7 @@ Android 项目在 `android/`，本机不需要安装 Android SDK / Gradle。推�
 - 构建产物：Actions 页面对应运行的 `EZShare-Android` artifact，解压得到 `app-debug.apk`
 - 也可在 Actions 页面点 `Run workflow` 手动触发
 
-首次安装需允许「安装未知来源应用」。Android 端通过系统文件授权（SAF）选择共享目录；为让服务在后台持续运行，会显示常驻通知。
+首次安装需允许「安装未知来源应用」。Android 端启动后先进入「连接共享」页：发现的设备点「加入」即可使用对方共享（对方开启访问码时先输入）；也可选择共享目录后启动本机服务。加入状态下可浏览/上传/下载远端文件、发送与复制文本，顶部可断开。本机服务通过 SAF 授权目录，后台运行时显示常驻通知。界面基于 Jetpack Compose Material 3，支持 Android 12+ 动态取色与深色模式。
 
 ## 命令行模式
 
