@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -84,7 +85,7 @@ fun EZShareScreen() {
     val treePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         if (uri != null) ShareManager.setTreeUri(uri)
     }
-    val filesPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContent()) { uris ->
+    val filesPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isNotEmpty()) {
             val n = ShareManager.addFiles(uris)
             toast(context, "已添加 $n 个文件")

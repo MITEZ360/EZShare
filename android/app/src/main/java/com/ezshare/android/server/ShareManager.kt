@@ -187,7 +187,7 @@ object ShareManager {
     fun addFolder(uri: Uri): Int {
         val display = androidx.documentfile.provider.DocumentFile.fromSingleUri(app, uri)?.name ?: "folder"
         val target = root.createDir(currentDir, display) ?: return 0
-        return copyTree(uri, target, display)
+        return copyTree(uri, target.uri, display)
     }
 
     private fun copyTree(source: Uri, destination: android.net.Uri, name: String): Int {

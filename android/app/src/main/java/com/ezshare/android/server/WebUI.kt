@@ -56,8 +56,8 @@ $content
             """<table><thead><tr><th>名称</th><th class="size">大小</th><th class="time">修改时间</th><th></th></tr></thead><tbody>$rows</tbody></table>"""
         }
         val toolbarButtons = if (settings.allowUpload) """
-<button class="btn" id="btn-mkdir">$plusIcon新建文件夹</button>
-<button class="btn primary" id="btn-upload">$uploadIcon上传文件</button>
+<button class="btn" id="btn-mkdir">${plusIcon}新建文件夹</button>
+<button class="btn primary" id="btn-upload">${uploadIcon}上传文件</button>
 <input type="file" id="picker" multiple hidden>
 """ else ""
         val countText = if (entries.isEmpty()) "空目录" else "${entries.count()} 个项目"
@@ -117,7 +117,7 @@ $footer
 <div class="composer-foot">
 <span class="count" id="text-chars">0 字符</span>
 <span class="spacer"></span>
-<button class="btn primary" id="btn-text-send">$uploadIcon发送到共享</button>
+<button class="btn primary" id="btn-text-send">${uploadIcon}发送到共享</button>
 </div>
 </div>
 """ else ""
@@ -134,7 +134,7 @@ $composer
 <div class="toolbar">
 <span class="count" id="text-count">${snippets.count()} 条文本</span>
 <span class="spacer"></span>
-<button class="btn ghost" id="btn-text-refresh">$refreshIcon刷新</button>
+<button class="btn ghost" id="btn-text-refresh">${refreshIcon}刷新</button>
 </div>
 $list
 </div>
