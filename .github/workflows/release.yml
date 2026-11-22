@@ -60,33 +60,13 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  macos:
-    runs-on: macos-13
+  publish:
+    needs: [android]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build universal app
-        run: ./scripts/build.sh universal
-
-      - name: Package app
-        run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          cd build
-          ditto -c -k --sequesterRsrc --keepParent EZShare.app "../EZShare-${VERSION}-macOS-universal.zip"
-
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: EZShare-macOS
-          path: EZShare-*-macOS-universal.zip
-          if-no-files-found: error
-          retention-days: 30
-
-  publish:
-    needs: [android, macos]
-    runs-on: ubuntu-latest
-    steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -98,7 +78,7 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           ANDROID_APK="artifacts/EZShare-Android/app-debug.apk"
-          MAC_ZIP=$(find artifacts/EZShare-macOS -name 'EZShare-*-macOS-universal.zip' -print -quit)
+          MAC_ZIP="dist/EZShare-${VERSION}-macOS-universal.zip"
           test -s "$ANDROID_APK"
           test -s "$MAC_ZIP"
           cp "$ANDROID_APK" "EZShare-${VERSION}-android.apk"
