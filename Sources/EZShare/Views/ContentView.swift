@@ -27,6 +27,7 @@ struct ContentView: View {
                         contentCard
                     }
                     VStack(spacing: 14) {
+                        peersCard
                         settingsCard
                         Spacer(minLength: 0)
                     }
@@ -503,6 +504,55 @@ struct ContentView: View {
         formatter.dateFormat = "MM-dd HH:mm"
         return formatter
     }()
+
+    // MARK: - 局域网发现
+
+    private var peersCard: some View {
+        Card(
+            "局域网设备",
+            systemImage: "network",
+            trailing: AnyView(
+                MiniButton(symbol: "arrow.clockwise", help: "重新发现") { model.refreshPeers() }
+            )
+        ) {
+            if model.peers.isEmpty {
+                VStack(spacing: 4) {
+                    Text("未发现其他设备")
+                        .font(.system(size: 11.5, weight: .medium))
+                        .foregroundStyle(.secondary)
+                    Text("同一网络中的设备启动共享后，点右上角刷新")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            } else {
+                ForEach(model.peers) { peer in
+                    HStack(spacing: 8) {
+                        Image(systemName: "laptopcomputer.and.iphone")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Palette.accent)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(peer.name)
+                                .font(.system(size: 11.5, weight: .medium))
+                                .lineLimit(1)
+                            Text("\(peer.host):\(peer.port)")
+                                .font(.system(size: 9.5, design: .monospaced))
+                                .foregroundStyle(.tertiary)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 4)
+                        MiniButton(symbol: "safari", help: "在浏览器中打开") {
+                            model.openInBrowser(peer.url)
+                        }
+                    }
+                    .padding(.vertical, 5)
+                    .contentShape(Rectangle())
+                    .onTapGesture { model.openInBrowser(peer.url) }
+                }
+            }
+        }
+    }
 
     // MARK: - 设置
 

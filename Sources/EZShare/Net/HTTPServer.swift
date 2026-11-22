@@ -60,6 +60,17 @@ final class HTTPServer {
 
         do {
             let listener = try NWListener(using: parameters, on: nwPort)
+            // 发布 Bonjour 服务，供局域网内其他 EZShare 实例发现
+            let deviceName = Host.current().localizedName ?? "Mac"
+            var txt = NWTXTRecord()
+            txt["name"] = deviceName
+            txt["port"] = String(nwPort.rawValue)
+            listener.service = NWListener.Service(
+                name: "\(deviceName)-\(nwPort.rawValue)",
+                type: LANDiscovery.serviceType,
+                domain: "local.",
+                txtRecord: txt
+            )
             listener.newConnectionHandler = { [weak self] connection in
                 self?.accept(connection)
             }

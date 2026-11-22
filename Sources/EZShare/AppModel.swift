@@ -32,6 +32,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var localNetworkStatus: LocalNetworkPermission.Status = .unknown
     @Published private(set) var fileEntries: [ShareEntry] = []
     @Published private(set) var snippets: [TextSnippet] = []
+    @Published private(set) var peers: [DiscoveredPeer] = []
 
     /// 原生界面的当前浏览子目录（相对共享目录，空 = 根）。
     @Published var browsePath: String = "" {
@@ -74,6 +75,7 @@ final class AppModel: ObservableObject {
 
     private var server: HTTPServer?
     private let config: ConfigStore
+    private let discovery = LANDiscovery()
 
     init() {
         let defaults = UserDefaults.standard
@@ -115,6 +117,12 @@ final class AppModel: ObservableObject {
         refreshFolderInfo()
         refreshContent()
         probeLocalNetwork()
+
+        discovery.onUpdate = { [weak self] peers in self?.peers = peers }
+        // 启动后自动发现一次；稍作延迟，避免与权限探测同时抢占网络栈
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            self?.refreshPeers()
+        }
     }
 
     // MARK: - 派生状态
@@ -259,6 +267,11 @@ final class AppModel: ObservableObject {
     func refreshAddresses() {
         let next = NetworkInfo.ipv4().map { $0.ip }
         if next != addresses { addresses = next }
+    }
+
+    /// 重新扫描局域网内其他 EZShare 实例。
+    func refreshPeers() {
+        discovery.refresh()
     }
 
     func refreshFolderInfo() {
