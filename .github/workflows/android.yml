@@ -48,6 +48,7 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon --stacktrace > /tmp/ez-build.log 2>&1 || true
           tail -150 /tmp/ez-build.log >> "$GITHUB_STEP_SUMMARY"
+          grep -n -E "error:|^e: |FAILURE:|What went wrong|Execution failed|Could not|not found" /tmp/ez-build.log | head -60 | while IFS= read -r line; do printf '::error::%s\n' "${line//'%'/%25}"; done
           grep -q "BUILD SUCCESSFUL" /tmp/ez-build.log
 
       - name: Upload APK
