@@ -45,7 +45,10 @@ jobs:
 
       - name: Build debug APK
         working-directory: android
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: |
+          gradle assembleDebug --no-daemon --stacktrace > /tmp/ez-build.log 2>&1 || true
+          tail -150 /tmp/ez-build.log >> "$GITHUB_STEP_SUMMARY"
+          grep -q "BUILD SUCCESSFUL" /tmp/ez-build.log
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
