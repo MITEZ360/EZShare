@@ -26,9 +26,15 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
           echo "ANDROID_HOME=$ANDROID_HOME"
-          ls "$ANDROID_HOME/platforms" | sort
-          test -d "$ANDROID_HOME/platforms/android-37"
-          test -d "$ANDROID_HOME/build-tools/37.0.0"
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-unset}" >> "$GITHUB_STEP_SUMMARY"
+          ls -d "$ANDROID_HOME" "$ANDROID_HOME"/* 2>&1 | head -40 >> "$GITHUB_STEP_SUMMARY" || true
+          echo "platforms:" >> "$GITHUB_STEP_SUMMARY"
+          ls "$ANDROID_HOME/platforms" 2>&1 | sort >> "$GITHUB_STEP_SUMMARY" || true
+          echo "build-tools:" >> "$GITHUB_STEP_SUMMARY"
+          ls "$ANDROID_HOME/build-tools" 2>&1 | sort >> "$GITHUB_STEP_SUMMARY" || true
+          ls "$ANDROID_HOME/platforms" | sort | while IFS= read -r line; do printf '::notice::PLATFORM %s\n' "$line"; done
+          test -d "$ANDROID_HOME/platforms/android-37" || printf '::error::android-37 missing\n'
+          test -d "$ANDROID_HOME/build-tools/37.0.0" || printf '::error::build-tools 37.0.0 missing\n'
 
       - name: Cache Gradle
         uses: actions/cache@v4
