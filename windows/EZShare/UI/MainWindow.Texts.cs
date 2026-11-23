@@ -96,9 +96,9 @@ namespace EZShare.UI
             if (canDelete)
             {
                 var delBtn = new Button { Content = "删除", Style = (Style)FindResource("RoundButton"), FontSize = 11, Padding = new Thickness(7, 3, 7, 3), Foreground = Theme.RedBrush };
-                delBtn.Click += async (s, e) =>
+                delBtn.Click += (s, e) =>
                 {
-                    bool ok = await _model.DeleteText(snippet);
+                    bool ok = _model.DeleteText(snippet);
                     ShowToast(ok ? "已删除" : "删除失败");
                 };
                 actions.Children.Add(delBtn);

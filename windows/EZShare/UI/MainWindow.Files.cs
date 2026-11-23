@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Input;
 using EZShare.Core;
+using EZShare.Server;
 
 namespace EZShare.UI
 {
@@ -150,7 +152,7 @@ namespace EZShare.UI
             return tile;
         }
 
-        private void ShowFileMenu(Control anchor, ShareEntry entry)
+        private void ShowFileMenu(FrameworkElement anchor, ShareEntry entry)
         {
             var menu = new ContextMenu();
             var open = new MenuItem { Header = entry.IsDirectory ? "进入文件夹" : "在资源管理器中显示" };

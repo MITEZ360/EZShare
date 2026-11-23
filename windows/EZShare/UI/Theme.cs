@@ -27,6 +27,7 @@ namespace EZShare.UI
         public static SolidColorBrush InkBrush { get { return Brush(Ink); } }
         public static SolidColorBrush MutedBrush { get { return Brush(Muted); } }
         public static SolidColorBrush LineBrush { get { return Brush(Line); } }
+        public static SolidColorBrush RedBrush { get { return Brush(Red); } }
         public static SolidColorBrush CardBrush { get { return Brush(CardColor); } }
 
         public static readonly TimeSpan Fast = TimeSpan.FromMilliseconds(150);
@@ -42,7 +43,7 @@ namespace EZShare.UI
         }
 
         /// <summary>点击时轻微缩放再回弹，给可点击区域克制的触感反馈。</summary>
-        public static void AttachPress(Control control)
+        public static void AttachPress(FrameworkElement control)
         {
             if (ReduceMotion) return;
             control.RenderTransformOrigin = new Point(0.5, 0.5);
