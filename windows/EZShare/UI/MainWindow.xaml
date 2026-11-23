@@ -24,7 +24,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Width="34" Height="34" CornerRadius="9" Background="#0E9A8E" Margin="0,0,10,0">
                         <Viewbox Width="20" Height="20">
-                            <Path Stroke="White" StrokeThickness="1.9" StrokeLinecap="Round" StrokeLinejoin="Round" Fill="None"
+                            <Path Stroke="White" StrokeThickness="1.9" StrokeLineCap="Round" StrokeLineJoin="Round" Fill="None"
                                   Data="M12 15.5V4 M7.8 8.2L12 4l4.2 4.2 M4.6 14v4.2a1.9 1.9 0 0 0 1.9 1.9h11a1.9 1.9 0 0 0 1.9-1.9V14"/>
                         </Viewbox>
                     </Border>
