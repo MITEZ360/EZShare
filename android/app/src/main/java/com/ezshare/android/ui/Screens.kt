@@ -187,7 +187,11 @@ fun AppRoot() {
             },
             onMkdir = { name -> scope.launch { ShareManager.mkdir(name) } },
             onOpen = { entry ->
-                ShareManager.openEntry(entry)?.let { openUrl(context, it) }
+                if (entry.isDirectory) {
+                    ShareManager.browse(entry.relativePath)
+                } else {
+                    ShareManager.openEntry(entry)?.let { openUrl(context, it) }
+                }
             },
             onDelete = { entry -> scope.launch { ShareManager.deleteEntry(entry) } },
             onSend = { text ->

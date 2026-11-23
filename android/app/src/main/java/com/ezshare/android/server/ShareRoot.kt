@@ -212,11 +212,12 @@ class ShareRoot(private val context: Context, spec: String) {
 
     private fun resolveFile(parts: List<String>): File? {
         var node = fileRoot ?: return null
-        for (part in parts) {
+        for ((index, part) in parts.withIndex()) {
             node = File(node, part)
-            if (!node.isDirectory) return null
+            // 中间层级必须是目录；最后一级可以是文件，也可以是目录。
+            if (index < parts.size - 1 && !node.isDirectory) return null
         }
-        return node
+        return if (node.exists()) node else null
     }
 
     private fun resolveDoc(parts: List<String>): DocumentFile? {
