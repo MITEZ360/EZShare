@@ -60,8 +60,37 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish Windows EXE
+        working-directory: windows
+        shell: pwsh
+        run: |
+          dotnet publish EZShare/EZShare.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true -o out/win-x64
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Compress-Archive -Path out/win-x64/EZShare.exe -DestinationPath EZShare-Windows.zip -Force
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EZShare-Windows
+          path: windows/EZShare-Windows.zip
+          if-no-files-found: error
+          retention-days: 30
+
   publish:
-    needs: [android]
+    needs: [android, windows]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -78,24 +107,30 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           ANDROID_APK="artifacts/EZShare-Android/app-debug.apk"
+          WINDOWS_ZIP="artifacts/EZShare-Windows/EZShare-Windows.zip"
           MAC_ZIP="dist/EZShare-${VERSION}-macOS-universal.zip"
           test -s "$ANDROID_APK"
+          test -s "$WINDOWS_ZIP"
           test -s "$MAC_ZIP"
           cp "$ANDROID_APK" "EZShare-${VERSION}-android.apk"
+          cp "$WINDOWS_ZIP" "EZShare-${VERSION}-windows-x64.zip"
           printf '%s\n' \
-            "EZShare ${VERSION} - macOS and Android" \
+            "EZShare ${VERSION} - macOS, Windows and Android" \
             "" \
-            "Features: LAN file/text sharing, access code, upload/delete toggles, Bonjour/mDNS discovery. Android can join an existing share or start its own service." \
+            "Features: LAN file/text sharing, access code, upload/delete toggles, mDNS/Bonjour discovery and cross-device join. Subtle UI motion on all platforms." \
             "" \
             "macOS: download EZShare-${VERSION}-macOS-universal.zip, unzip and move EZShare.app to Applications. Universal binary (Intel + Apple Silicon). If macOS blocks first launch, right-click and choose Open." \
             "" \
+            "Windows: download EZShare-${VERSION}-windows-x64.zip, extract EZShare.exe and run. Self-contained, no .NET runtime required. Windows Defender may warn on first run for unsigned apps." \
+            "" \
             "Android: install EZShare-${VERSION}-android.apk (allow unknown sources). Grant a shared folder on first launch; a persistent notification keeps sharing alive." \
             "" \
-            "The access code can be viewed or disabled in the app settings." \
+            "All platforms share the same version number. The access code can be viewed or disabled in the app settings." \
             > /tmp/ez-release-notes.md
           gh release delete "$GITHUB_REF_NAME" --yes >/dev/null 2>&1 || true
           gh release create "$GITHUB_REF_NAME" \
             --title "EZShare $VERSION" \
             --notes-file /tmp/ez-release-notes.md \
             "EZShare-${VERSION}-android.apk" \
+            "EZShare-${VERSION}-windows-x64.zip" \
             "$MAC_ZIP"
