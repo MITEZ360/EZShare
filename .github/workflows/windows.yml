@@ -1,0 +1,52 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main, windows-port]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        working-directory: windows
+        run: dotnet restore EZShare.sln
+
+      - name: Build
+        working-directory: windows
+        run: dotnet build EZShare.sln -c Release --no-restore
+
+      - name: Publish (self-contained, framework-dependent fallback)
+        working-directory: windows
+        shell: pwsh
+        run: |
+          dotnet publish EZShare/EZShare.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true -o out/win-x64
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Package
+        working-directory: windows
+        shell: pwsh
+        run: |
+          $version = "0.0.6"
+          Compress-Archive -Path out/win-x64/EZShare.exe -DestinationPath "EZShare-$version-windows-x64.zip" -Force
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: EZShare-Windows
+          path: windows/EZShare-0.0.6-windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30

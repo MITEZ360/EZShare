@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>EZShare</RootNamespace>
+    <AssemblyName>EZShare</AssemblyName>
+    <Version>0.0.6</Version>
+    <AssemblyVersion>0.0.6.0</AssemblyVersion>
+    <FileVersion>0.0.6.0</FileVersion>
+    <InformationalVersion>0.0.6</InformationalVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\web.css" LogicalName="EZShare.Assets.web.css" />
+    <EmbeddedResource Include="Assets\web.js" LogicalName="EZShare.Assets.web.js" />
+    <None Include="Assets\web.css" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\web.js" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
