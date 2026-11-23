@@ -26,14 +26,16 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --version
+          echo "sdkmanager: $(sdkmanager --version 2>&1)"
+          echo "installed platforms: $(ls "$ANDROID_HOME/platforms" 2>/dev/null | tr '\n' ' ')"
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
           set +e
           sdkmanager "platforms;android-37" "build-tools;37.0.0" > /tmp/ez-sdk.log 2>&1
           SDK_RC=$?
           set -e
           cat /tmp/ez-sdk.log >> "$GITHUB_STEP_SUMMARY"
-          grep -n -i -E "error|failed|not found|licens" /tmp/ez-sdk.log | head -40 | while IFS= read -r line; do printf '::error::%s\n' "${line//'%'/%25}"; done
+          echo "sdkmanager exit=$SDK_RC" >> "$GITHUB_STEP_SUMMARY"
+          head -50 /tmp/ez-sdk.log | while IFS= read -r line; do printf '::notice::SDK %s\n' "${line//'%'/%25}"; done
           exit "$SDK_RC"
 
       - name: Cache Gradle
