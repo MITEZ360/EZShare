@@ -24,18 +24,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -66,9 +60,15 @@ fun FilesScreen(
     var folderName by remember { mutableStateOf("") }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             Box {
-                FloatingActionButton(onClick = { menuExpanded = true }) {
+                FloatingActionButton(
+                    onClick = { menuExpanded = true },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(15.dp)
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = "添加")
                 }
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
@@ -93,84 +93,82 @@ fun FilesScreen(
     ) { padding ->
         LazyColumn(
             Modifier.padding(padding).fillMaxSize(),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                        if (state.currentPath.isNotEmpty()) {
-                            IconButton(onClick = { com.ezshare.android.server.ShareManager.browse("..") }) {
-                                Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = "返回上一级")
-                            }
+                Row(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (state.currentPath.isNotEmpty()) {
+                        IconButton(onClick = { com.ezshare.android.server.ShareManager.browse("..") }) {
+                            Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = "返回上一级",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer)
                         }
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                if (state.currentPath.isEmpty()) "共享目录" else state.currentPath,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Text(
-                                "${state.fileEntries.size} 个项目",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
+                    } else {
+                        Spacer(Modifier.width(6.dp))
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            if (state.currentPath.isEmpty()) "共享目录" else state.currentPath,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Text(
+                            "${state.fileEntries.size} 个项目",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        )
                     }
                 }
             }
             if (state.fileEntries.isEmpty()) {
-                item {
-                    Column(
-                        Modifier.fillMaxWidth().padding(vertical = 48.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Box(
-                            Modifier.size(64.dp).clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Filled.Folder, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                        Text("这里还是空的", style = MaterialTheme.typography.titleSmall)
-                        Text(
-                            "点击右下角按钮添加文件",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                item { EzEmptyState(Icons.Filled.Folder, "这里还是空的", "点击右下角添加文件") }
             } else {
                 items(state.fileEntries, key = { it.relativePath }) { entry ->
-                    ElevatedCard(Modifier.fillMaxWidth()) {
-                        Row(
-                            Modifier.fillMaxWidth().clickable { onOpen(entry) }.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                    Row(
+                        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .clickable { onOpen(entry) }
+                            .padding(horizontal = 12.dp, vertical = 9.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            Modifier.size(34.dp).clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (entry.isDirectory) MaterialTheme.colorScheme.primaryContainer
+                                    else MaterialTheme.colorScheme.secondaryContainer
+                                ),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Box(
-                                Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.primaryContainer),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (entry.isDirectory) Icons.Filled.Folder else Icons.Filled.Article,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
+                            Icon(
+                                imageVector = if (entry.isDirectory) Icons.Filled.Folder else Icons.Filled.Article,
+                                contentDescription = null,
+                                tint = if (entry.isDirectory) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(11.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(entry.name, style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium)
+                            val subtitle = when {
+                                entry.isDirectory -> "文件夹"
+                                entry.modifiedLabel.isNotEmpty() -> formatSize(entry.size) + " · " + entry.modifiedLabel.take(16)
+                                else -> formatSize(entry.size)
                             }
-                            Spacer(Modifier.width(12.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(entry.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                                val subtitle = when {
-                                    entry.isDirectory -> "文件夹"
-                                    entry.modifiedLabel.isNotEmpty() -> formatSize(entry.size) + " · " + entry.modifiedLabel.take(16)
-                                    else -> formatSize(entry.size)
-                                }
-                                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            if (state.allowDelete) {
-                                IconButton(onClick = { onDelete(entry) }) {
-                                    Icon(Icons.Filled.Delete, contentDescription = "删除", tint = MaterialTheme.colorScheme.error)
-                                }
+                            Text(subtitle, style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        if (state.allowDelete) {
+                            IconButton(onClick = { onDelete(entry) }, modifier = Modifier.size(32.dp)) {
+                                Icon(Icons.Filled.Delete, contentDescription = "删除",
+                                    tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(17.dp))
                             }
                         }
                     }
@@ -182,14 +180,12 @@ fun FilesScreen(
     if (showMkdir) {
         AlertDialog(
             onDismissRequest = { showMkdir = false },
-            title = { Text("新建文件夹") },
+            title = { Text("新建文件夹", style = MaterialTheme.typography.titleMedium) },
             text = {
-                OutlinedTextField(
+                EzTextField(
                     value = folderName,
                     onValueChange = { folderName = it },
-                    label = { Text("文件夹名称") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    label = "文件夹名称"
                 )
             },
             confirmButton = {
@@ -212,71 +208,74 @@ fun TextsScreen(
 ) {
     var draft by remember { mutableStateOf("") }
     LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("发送文本", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    OutlinedTextField(
-                        value = draft,
-                        onValueChange = { draft = it },
-                        modifier = Modifier.fillMaxWidth().height(120.dp),
-                        placeholder = { Text("粘贴或输入要共享的文字…") }
-                    )
-                    Row {
-                        Spacer(Modifier.weight(1f))
-                        Button(onClick = {
-                            onSend(draft)
-                            draft = ""
-                        }) { Text("发送到共享") }
-                    }
+            Column(
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    BrandMark(size = 22)
+                    Spacer(Modifier.width(8.dp))
+                    Text("发送文本", style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold)
+                }
+                EzTextField(
+                    value = draft,
+                    onValueChange = { draft = it },
+                    label = "粘贴或输入要共享的文字…",
+                    modifier = Modifier.height(92.dp),
+                    singleLine = false,
+                    minLines = 3,
+                    maxLines = 6
+                )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    EzButton(text = "发送到共享", onClick = {
+                        onSend(draft)
+                        draft = ""
+                    }, compact = true)
                 }
             }
         }
         item {
-            Text("共享文本（${state.snippets.size}）", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            SectionTitle(text = "共享文本（${state.snippets.size}）")
         }
         if (state.snippets.isEmpty()) {
-            item {
-                Column(
-                    Modifier.fillMaxWidth().padding(vertical = 36.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(Icons.Filled.Article, contentDescription = null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("还没有共享文本", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
+            item { EzEmptyState(Icons.Filled.Article, "还没有共享文本", "在上方输入文字并发送") }
         } else {
             items(state.snippets, key = { it.id }) { snippet ->
-                ElevatedCard(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(horizontal = 13.dp, vertical = 11.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        snippet.content.replace('\n', ' ').take(200),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            snippet.content.replace('\n', ' ').take(200),
-                            style = MaterialTheme.typography.bodyMedium
+                            "${snippet.content.length} 字符",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f)
                         )
-                        HorizontalDivider()
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                "${snippet.content.length} 字符",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.weight(1f)
-                            )
-                            TextButton(onClick = { onCopy(snippet.content) }) {
-                                Icon(Icons.Filled.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
+                        TextButton(onClick = { onCopy(snippet.content) }) {
+                            Icon(Icons.Filled.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("复制", style = MaterialTheme.typography.labelMedium)
+                        }
+                        if (state.allowDelete) {
+                            TextButton(onClick = { onDeleteText(snippet.id) }) {
+                                Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(14.dp))
                                 Spacer(Modifier.width(4.dp))
-                                Text("复制")
-                            }
-                            if (state.allowDelete) {
-                                TextButton(onClick = { onDeleteText(snippet.id) }) {
-                                    Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(Modifier.width(4.dp))
-                                    Text("删除")
-                                }
+                                Text("删除", style = MaterialTheme.typography.labelMedium)
                             }
                         }
                     }

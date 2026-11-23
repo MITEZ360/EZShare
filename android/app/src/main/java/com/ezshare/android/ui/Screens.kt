@@ -13,7 +13,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,32 +28,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.LaptopMac
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -230,16 +220,14 @@ fun AppRoot() {
     if (target != null) {
         AlertDialog(
             onDismissRequest = { joinTarget = null },
-            title = { Text("加入 ${target.name}") },
+            title = { Text("加入 ${target.name}", style = MaterialTheme.typography.titleMedium) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("对方启用了访问码，请输入后继续。", style = MaterialTheme.typography.bodySmall)
-                    OutlinedTextField(
+                    EzTextField(
                         value = codeInput,
                         onValueChange = { codeInput = it },
-                        label = { Text("访问码") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        label = "访问码"
                     )
                 }
             },
@@ -261,12 +249,13 @@ fun AppRoot() {
     qrUrl?.let { url ->
         AlertDialog(
             onDismissRequest = { qrUrl = null },
-            title = { Text("扫码访问") },
+            title = { Text("扫码访问", style = MaterialTheme.typography.titleMedium) },
             text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     val bitmap = remember(url) { qrBitmap(url) }
                     if (bitmap != null) {
-                        Image(bitmap.asImageBitmap(), contentDescription = "二维码", modifier = Modifier.size(220.dp))
+                        Image(bitmap.asImageBitmap(), contentDescription = "二维码", modifier = Modifier.size(190.dp))
                     } else {
                         Text("暂无可用地址", style = MaterialTheme.typography.bodySmall)
                     }
@@ -287,9 +276,17 @@ private fun ConnectScreen(
     onPickTree: () -> Unit
 ) {
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("EZShare", fontWeight = FontWeight.Bold) },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        BrandMark(size = 22)
+                        Spacer(Modifier.width(8.dp))
+                        Text("EZShare", style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold)
+                    }
+                },
                 actions = {
                     IconButton(onClick = { ShareManager.discovery.refresh() }) {
                         Icon(Icons.Filled.Refresh, contentDescription = "重新发现")
@@ -300,16 +297,14 @@ private fun ConnectScreen(
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding).fillMaxSize(),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item { BrandHeader() }
-            item {
-                Text("局域网设备", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-            }
+            item { SectionTitle(text = "局域网设备") }
             if (state.peers.isEmpty()) {
                 item {
-                    EmptyState(
+                    EzEmptyState(
                         icon = Icons.Filled.Wifi,
                         title = "未发现其他设备",
                         subtitle = "确保对方已启动共享，且与本机连接同一 Wi-Fi"
@@ -321,26 +316,26 @@ private fun ConnectScreen(
                 }
             }
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                Column(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(9.dp)
                 ) {
-                    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(
-                            "或启动本机共享",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            "选择一个共享目录，局域网内的设备就能发现并加入。",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(onClick = onStartLocal) { Text("启动本机服务") }
-                            OutlinedButton(onClick = onPickTree) { Text("选择目录") }
-                        }
+                    Text(
+                        "或启动本机共享",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        "选择一个共享目录，局域网内的设备就能发现并加入。",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        EzButton(text = "启动本机服务", onClick = onStartLocal, compact = true)
+                        EzButton(text = "选择目录", onClick = onPickTree, filled = false, compact = true)
                     }
                 }
             }
@@ -353,19 +348,22 @@ private fun BrandHeader() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(158.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Brush.linearGradient(listOf(Color(0xFF0F766E), Color(0xFF2563EB))))
-            .padding(20.dp)
+            .height(126.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(Brush.linearGradient(listOf(
+                Color(0xFF0EA5A0), Color(0xFF3B82F6)
+            )))
+            .padding(16.dp)
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Wifi, contentDescription = null, tint = Color.White, modifier = Modifier.size(32.dp))
-                Spacer(Modifier.width(10.dp))
+                BrandMark(size = 24)
+                Spacer(Modifier.width(8.dp))
                 Text("局域网共享", color = Color.White, style = MaterialTheme.typography.labelLarge)
             }
             Column {
-                Text("随时分享，轻松连接", color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text("随时分享，轻松连接", color = Color.White,
+                    style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
                 Text(
                     "发现同一网络内的共享，或直接创建自己的共享",
                     color = Color.White.copy(alpha = 0.85f),
@@ -378,53 +376,40 @@ private fun BrandHeader() {
 
 @Composable
 private fun PeerCard(peer: Peer, onJoin: () -> Unit) {
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier
-                    .size(46.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (peer.name.contains("mac", ignoreCase = true)) Icons.Filled.LaptopMac else Icons.Filled.Android,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(peer.name, fontWeight = FontWeight.SemiBold)
-                Text(peer.url, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                if (peer.requiresCode) {
-                    Text("需要访问码", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
-                }
-            }
-            Button(onClick = onJoin) { Text("加入") }
-        }
-    }
-}
-
-@Composable
-private fun EmptyState(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    subtitle: String
-) {
-    Column(
-        Modifier.fillMaxWidth().padding(vertical = 28.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            Modifier.size(64.dp).clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
+            Modifier.size(38.dp).clip(RoundedCornerShape(11.dp))
+                .background(MaterialTheme.colorScheme.secondaryContainer),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(
+                imageVector = if (peer.name.contains("mac", ignoreCase = true)) Icons.Filled.LaptopMac else Icons.Filled.Android,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(19.dp)
+            )
         }
-        Text(title, style = MaterialTheme.typography.titleSmall)
-        Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Spacer(Modifier.width(10.dp))
+        Column(Modifier.weight(1f)) {
+            Text(peer.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            Text(peer.url, style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (peer.requiresCode) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.Lock, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(11.dp))
+                    Spacer(Modifier.width(3.dp))
+                    Text("需要访问码", style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error)
+                }
+            }
+        }
+        EzButton(text = "加入", onClick = onJoin, compact = true)
     }
 }
 
@@ -451,6 +436,7 @@ private fun MainShell(
 ) {
     var tab by remember { mutableStateOf(0) }
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -461,10 +447,12 @@ private fun MainShell(
                                 SessionMode.REMOTE -> "已连接 ${state.peer?.name ?: "设备"}"
                                 else -> "EZShare"
                             },
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
                         )
                         if (state.mode == SessionMode.LOCAL) {
-                            Text("端口 ${state.port}", style = MaterialTheme.typography.labelSmall)
+                            Text("端口 ${state.port}", style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
@@ -479,30 +467,30 @@ private fun MainShell(
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                 NavigationBarItem(
                     selected = tab == 0,
                     onClick = { tab = 0 },
-                    icon = { Icon(Icons.Filled.Folder, contentDescription = null) },
-                    label = { Text("文件") }
+                    icon = { Icon(Icons.Filled.Folder, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    label = { Text("文件", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 1,
                     onClick = { tab = 1 },
-                    icon = { Icon(Icons.Filled.Article, contentDescription = null) },
-                    label = { Text("文本") }
+                    icon = { Icon(Icons.Filled.Article, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    label = { Text("文本", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 2,
                     onClick = { tab = 2 },
-                    icon = { Icon(Icons.Filled.Wifi, contentDescription = null) },
-                    label = { Text("设备") }
+                    icon = { Icon(Icons.Filled.Wifi, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    label = { Text("设备", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 3,
                     onClick = { tab = 3 },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                    label = { Text("设置") }
+                    icon = { Icon(Icons.Filled.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    label = { Text("设置", style = MaterialTheme.typography.labelSmall) }
                 )
             }
         }
@@ -524,21 +512,20 @@ private fun MainShell(
 @Composable
 private fun DevicesScreen(state: UiState, onJoin: (Peer) -> Unit) {
     LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("局域网设备", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = { ShareManager.discovery.refresh() }) {
-                    Icon(Icons.Filled.Refresh, contentDescription = "刷新")
+                SectionTitle(text = "局域网设备", modifier = Modifier.weight(1f))
+                IconButton(onClick = { ShareManager.discovery.refresh() }, modifier = Modifier.size(32.dp)) {
+                    Icon(Icons.Filled.Refresh, contentDescription = "刷新", modifier = Modifier.size(18.dp))
                 }
             }
         }
         if (state.peers.isEmpty()) {
-            item { EmptyState(Icons.Filled.Wifi, "未发现其他设备", "下拉后可点击刷新按钮重新扫描") }
+            item { EzEmptyState(Icons.Filled.Wifi, "未发现其他设备", "点击刷新按钮重新扫描") }
         } else {
             items(state.peers, key = { it.url }) { peer ->
                 PeerCard(peer = peer, onJoin = { onJoin(peer) })
@@ -558,55 +545,50 @@ private fun SettingsScreen(
     onLeaveRemote: () -> Unit
 ) {
     LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("连接状态", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text("模式：${if (state.mode == SessionMode.LOCAL) "本机服务" else "加入 ${state.peer?.name ?: "其他设备"}"}")
-                    Text("共享名：${state.shareName}", style = MaterialTheme.typography.bodySmall)
-                    if (state.mode == SessionMode.LOCAL) {
-                        OutlinedButton(onClick = onStopLocal) { Text("停止本机服务") }
-                    } else {
-                        OutlinedButton(onClick = onLeaveRemote) { Text("断开连接") }
-                    }
-                }
+            SettingsCard(title = "连接状态") {
+                Text("模式：${if (state.mode == SessionMode.LOCAL) "本机服务" else "加入 ${state.peer?.name ?: "其他设备"}"}",
+                    style = MaterialTheme.typography.bodySmall)
+                Text("共享名：${state.shareName}", style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(2.dp))
+                EzButton(
+                    text = if (state.mode == SessionMode.LOCAL) "停止本机服务" else "断开连接",
+                    onClick = if (state.mode == SessionMode.LOCAL) onStopLocal else onLeaveRemote,
+                    filled = false, compact = true
+                )
             }
         }
         if (state.mode == SessionMode.LOCAL) {
             item {
-                Card(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("本机服务设置", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        OutlinedButton(onClick = onPickTree) { Text("更改共享目录") }
-                        OutlinedTextField(
-                            value = state.settings.port.toString(),
-                            onValueChange = { value ->
-                                onUpdateSettings { port = value.toIntOrNull()?.coerceIn(1024, 65535) ?: 8080 }
-                            },
-                            label = { Text("端口") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        SwitchRow("允许上传 / 写入", state.settings.allowUpload) {
-                            onUpdateSettings { allowUpload = it }
-                        }
-                        SwitchRow("允许删除", state.settings.allowDelete) {
-                            onUpdateSettings { allowDelete = it }
-                        }
-                        SwitchRow("需要访问码", state.settings.requireCode) {
-                            onUpdateSettings { requireCode = it }
-                        }
-                        OutlinedTextField(
-                            value = state.settings.accessCode,
-                            onValueChange = { value -> onUpdateSettings { accessCode = value } },
-                            label = { Text("访问码（6 位字母数字）") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        TextButton(onClick = onRegenerateCode) { Text("随机生成访问码") }
+                SettingsCard(title = "本机服务设置") {
+                    EzButton(text = "更改共享目录", onClick = onPickTree, filled = false, compact = true)
+                    EzTextField(
+                        value = state.settings.port.toString(),
+                        onValueChange = { value ->
+                            onUpdateSettings { port = value.toIntOrNull()?.coerceIn(1024, 65535) ?: 8080 }
+                        },
+                        label = "端口"
+                    )
+                    SwitchRow("允许上传 / 写入", state.settings.allowUpload) {
+                        onUpdateSettings { allowUpload = it }
                     }
+                    SwitchRow("允许删除", state.settings.allowDelete) {
+                        onUpdateSettings { allowDelete = it }
+                    }
+                    SwitchRow("需要访问码", state.settings.requireCode) {
+                        onUpdateSettings { requireCode = it }
+                    }
+                    EzTextField(
+                        value = state.settings.accessCode,
+                        onValueChange = { value -> onUpdateSettings { accessCode = value } },
+                        label = "访问码（6 位字母数字）"
+                    )
+                    EzButton(text = "随机生成访问码", onClick = onRegenerateCode, filled = false, compact = true)
                 }
             }
         }
@@ -614,8 +596,26 @@ private fun SettingsScreen(
 }
 
 @Composable
+private fun SettingsCard(title: String, content: @Composable () -> Unit) {
+    Column(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(9.dp)
+    ) {
+        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        content()
+    }
+}
+
+@Composable
 private fun SwitchRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
         Switch(checked = checked, onCheckedChange = onChange)
     }
