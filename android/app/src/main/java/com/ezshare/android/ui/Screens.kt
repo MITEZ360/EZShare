@@ -38,6 +38,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -140,8 +142,7 @@ fun AppRoot() {
     fun startLocal() {
         requestPermissions()
         if (!ShareManager.root.isValid) {
-            Toast.makeText(context, "请先选择共享目录", Toast.LENGTH_SHORT).show()
-            treePicker.launch(null)
+            Toast.makeText(context, "共享目录不可用，请在设置中重新选择", Toast.LENGTH_SHORT).show()
             return
         }
         val intent = Intent(context, ShareService::class.java)
@@ -249,9 +250,14 @@ fun AppRoot() {
     qrUrl?.let { url ->
         AlertDialog(
             onDismissRequest = { qrUrl = null },
-            title = { Text("扫码访问", style = MaterialTheme.typography.titleMedium) },
+            title = {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text("扫码访问", style = MaterialTheme.typography.titleMedium)
+                }
+            },
             text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                Column(Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     val bitmap = remember(url) { qrBitmap(url) }
                     if (bitmap != null) {
@@ -259,7 +265,8 @@ fun AppRoot() {
                     } else {
                         Text("暂无可用地址", style = MaterialTheme.typography.bodySmall)
                     }
-                    Text(url, style = MaterialTheme.typography.bodySmall)
+                    Text(url, style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                 }
             },
             confirmButton = { TextButton(onClick = { qrUrl = null }) { Text("关闭") } }
@@ -459,9 +466,23 @@ private fun MainShell(
                 actions = {
                     if (state.mode == SessionMode.LOCAL) {
                         IconButton(onClick = onShowQr) { Icon(Icons.Filled.QrCode, contentDescription = "二维码") }
-                        TextButton(onClick = onStopLocal) { Text("停止") }
+                        StatusButton(
+                            label = "共享中",
+                            hint = "点击停止",
+                            container = MaterialTheme.colorScheme.primaryContainer,
+                            content = MaterialTheme.colorScheme.onPrimaryContainer,
+                            dot = MaterialTheme.colorScheme.primary,
+                            onClick = onStopLocal
+                        )
                     } else {
-                        TextButton(onClick = onLeaveRemote) { Text("断开") }
+                        StatusButton(
+                            label = "已连接",
+                            hint = "点击断开",
+                            container = MaterialTheme.colorScheme.secondaryContainer,
+                            content = MaterialTheme.colorScheme.onSecondaryContainer,
+                            dot = MaterialTheme.colorScheme.secondary,
+                            onClick = onLeaveRemote
+                        )
                     }
                 }
             )
@@ -505,6 +526,31 @@ private fun MainShell(
             if (state.busy) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
+        }
+    }
+}
+
+@Composable
+private fun StatusButton(
+    label: String,
+    hint: String,
+    container: Color,
+    content: Color,
+    dot: Color,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.height(34.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = container, contentColor = content),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 11.dp, vertical = 0.dp)
+    ) {
+        Box(Modifier.size(7.dp).clip(RoundedCornerShape(50)).background(dot))
+        Spacer(Modifier.width(6.dp))
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+            Text(hint, style = MaterialTheme.typography.labelSmall, color = content.copy(alpha = 0.72f))
         }
     }
 }
@@ -566,6 +612,10 @@ private fun SettingsScreen(
         if (state.mode == SessionMode.LOCAL) {
             item {
                 SettingsCard(title = "本机服务设置") {
+                    Text("共享目录", style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(ShareManager.root.displayPath, style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface)
                     EzButton(text = "更改共享目录", onClick = onPickTree, filled = false, compact = true)
                     EzTextField(
                         value = state.settings.port.toString(),

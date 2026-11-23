@@ -41,7 +41,7 @@ data class UiState(
     val snippets: List<TextSnippet> = emptyList(),
     val currentPath: String = "",
     val allowUpload: Boolean = true,
-    val allowDelete: Boolean = false,
+    val allowDelete: Boolean = true,
     val busy: Boolean = false,
     val message: String? = null
 )
@@ -335,7 +335,7 @@ object ShareManager {
                     val output = root.createFile(_state.value.currentPath, display) ?: continue
                     try {
                         val input = app.contentResolver.openInputStream(uri) ?: continue
-                        val out = app.contentResolver.openOutputStream(output.uri) ?: continue
+                        val out = root.openOutput(output.relativePath) ?: continue
                         input.use { src -> out.use { dst -> src.copyTo(dst, 64 * 1024) } }
                         count++
                     } catch (_: Exception) {}
@@ -351,43 +351,8 @@ object ShareManager {
             notify("加入共享时暂不支持整目录上传，请逐个选择文件")
             return 0
         }
-        val display = DocumentFile.fromSingleUri(app, uri)?.name ?: "folder"
-        val target = root.createDir(_state.value.currentPath, display) ?: return 0
-        val count = copyTree(uri, target.uri)
+        val count = root.importTree(uri, _state.value.currentPath)
         refresh()
-        return count
-    }
-
-    private fun copyTree(source: Uri, destination: Uri): Int {
-        var count = 0
-        val children = android.provider.DocumentsContract.buildChildDocumentsUriUsingTree(
-            source, android.provider.DocumentsContract.getDocumentId(source)
-        )
-        val cursor = app.contentResolver.query(children, null, null, null, null) ?: return 0
-        cursor.use {
-            while (it.moveToNext()) {
-                val idIdx = it.getColumnIndex(android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID)
-                val nameIdx = it.getColumnIndex(android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME)
-                val mimeIdx = it.getColumnIndex(android.provider.DocumentsContract.Document.COLUMN_MIME_TYPE)
-                if (idIdx < 0 || nameIdx < 0 || mimeIdx < 0) continue
-                val childId = it.getString(idIdx)
-                val childName = it.getString(nameIdx) ?: continue
-                val mime = it.getString(mimeIdx) ?: continue
-                val childUri = android.provider.DocumentsContract.buildDocumentUriUsingTree(source, childId)
-                if (mime == android.provider.DocumentsContract.Document.MIME_TYPE_DIR) {
-                    val dir = DocumentFile.fromTreeUri(app, destination)?.createDirectory(childName)?.uri ?: continue
-                    count += copyTree(childUri, dir)
-                } else {
-                    val file = DocumentFile.fromTreeUri(app, destination)?.createFile(MimeTypes.of(childName), childName) ?: continue
-                    try {
-                        val input = app.contentResolver.openInputStream(childUri) ?: continue
-                        val out = app.contentResolver.openOutputStream(file.uri) ?: continue
-                        input.use { src -> out.use { dst -> src.copyTo(dst, 64 * 1024) } }
-                        count++
-                    } catch (_: Exception) {}
-                }
-            }
-        }
         return count
     }
 
@@ -395,9 +360,9 @@ object ShareManager {
         return when (_state.value.mode) {
             SessionMode.REMOTE -> if (entry.isDirectory) null else remote?.downloadUrl(entry.relativePath)
             else -> {
-                val file = root.resolve(entry.relativePath) ?: return null
+                val uri = root.viewUri(entry.relativePath) ?: return null
                 val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
-                    data = file.uri
+                    data = uri
                     addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 try {

@@ -8,7 +8,7 @@ import java.util.UUID
 data class ShareSettings(
     var port: Int = 8080,
     var allowUpload: Boolean = true,
-    var allowDelete: Boolean = false,
+    var allowDelete: Boolean = true,
     var requireCode: Boolean = false,
     var accessCode: String = "",
     var treeUri: String = ""
@@ -16,21 +16,31 @@ data class ShareSettings(
 
 class ConfigStore(context: Context) {
     private val prefs = context.getSharedPreferences("ezshare_config", Context.MODE_PRIVATE)
+    private val defaultTreeUri = ShareRoot.defaultSpec(context)
 
     init {
+        val editor = prefs.edit()
+        var changed = false
         if (prefs.getString("accessCode", "").isNullOrEmpty()) {
-            prefs.edit().putString("accessCode", generateCode()).apply()
+            editor.putString("accessCode", generateCode())
+            changed = true
         }
+        // 默认共享目录：程序级持久化，首次启动时写入，之后以用户设置为准。
+        if (prefs.getString("treeUri", "").isNullOrEmpty()) {
+            editor.putString("treeUri", ShareRoot.defaultSpec(context))
+            changed = true
+        }
+        if (changed) editor.apply()
     }
 
     val settings: ShareSettings
         get() = ShareSettings(
             port = prefs.getInt("port", 8080),
             allowUpload = prefs.getBoolean("allowUpload", true),
-            allowDelete = prefs.getBoolean("allowDelete", false),
+            allowDelete = prefs.getBoolean("allowDelete", true),
             requireCode = prefs.getBoolean("requireCode", false),
             accessCode = prefs.getString("accessCode", "") ?: "",
-            treeUri = prefs.getString("treeUri", "") ?: ""
+            treeUri = prefs.getString("treeUri", "") ?: defaultTreeUri
         )
 
     fun update(s: ShareSettings) {

@@ -159,19 +159,15 @@ class Router(
 
             req.path == "/download" && req.method == "GET" -> {
                 val path = req.query["path"] ?: ""
-                val file = root.resolve(path)
-                if (file == null || !file.isFile) {
+                val file = root.node(path)
+                if (file == null || file.isDirectory) {
                     html(web.errorPage(404, "找不到这个文件"), 404)
                 } else {
-                    val stream = try {
-                        context.contentResolver.openInputStream(file.uri)
-                    } catch (_: Exception) {
-                        null
-                    }
+                    val stream = root.openInput(path)
                     if (stream == null) {
                         text("无法读取文件", 500)
                     } else {
-                        val len = file.length()
+                        val len = file.length
                         var offset = 0L
                         var end = len - 1
                         var status = 200
@@ -191,10 +187,10 @@ class Router(
                         }
                         val length = if (len <= 0) 0 else end - offset + 1
                         Res(
-                            status, MimeTypes.of(file.name ?: path),
+                            status, MimeTypes.of(file.name),
                             ByteArray(0),
                             extra + mapOf(
-                                "Content-Disposition" to "attachment; filename*=UTF-8''${WebUI.enc(file.name ?: "file")}"
+                                "Content-Disposition" to "attachment; filename*=UTF-8''${WebUI.enc(file.name)}"
                             ),
                             stream, length, offset
                         )
@@ -212,11 +208,7 @@ class Router(
                 if (file == null) {
                     okJson(JSONObject().put("ok", false).put("error", "无法创建文件"), 500)
                 } else {
-                    val output = try {
-                        context.contentResolver.openOutputStream(file.uri, "wt")
-                    } catch (_: Exception) {
-                        null
-                    }
+                    val output = root.openOutput(file.path)
                     if (output == null) {
                         okJson(JSONObject().put("ok", false).put("error", "无法写入文件"), 500)
                     } else {
@@ -226,7 +218,7 @@ class Router(
                         okJson(
                             JSONObject()
                                 .put("ok", true)
-                                .put("name", file.name ?: name)
+                                .put("name", file.name)
                                 .put("size", written)
                         )
                     }
@@ -244,7 +236,7 @@ class Router(
                     if (created == null) {
                         okJson(JSONObject().put("ok", false).put("error", "创建失败"), 500)
                     } else {
-                        okJson(JSONObject().put("ok", true).put("name", created.name ?: name))
+                        okJson(JSONObject().put("ok", true).put("name", created.name))
                     }
                 }
             }

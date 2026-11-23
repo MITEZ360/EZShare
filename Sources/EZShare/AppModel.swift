@@ -87,7 +87,7 @@ final class AppModel: ObservableObject {
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
         let upload = defaults.object(forKey: Keys.allowUpload) as? Bool ?? true
-        let deletion = defaults.object(forKey: Keys.allowDelete) as? Bool ?? false
+        let deletion = defaults.object(forKey: Keys.allowDelete) as? Bool ?? true
         let protection = defaults.bool(forKey: Keys.requireCode)
         let savedCode = defaults.string(forKey: Keys.accessCode) ?? ""
         // 旧版本的 4 位数字码自动升级为 6 位字母数字混合码
@@ -399,6 +399,21 @@ final class AppModel: ObservableObject {
     func deleteSnippet(_ snippet: TextSnippet) {
         _ = TextStore.shared.remove(id: snippet.id)
         refreshContent()
+    }
+
+    /// 把共享条目的文件/文件夹移到废纸篓。
+    @discardableResult
+    func trashEntry(_ entry: ShareEntry) -> Bool {
+        guard !entry.relativePath.isEmpty else { return false }
+        let target = url(for: entry)
+        guard FileManager.default.fileExists(atPath: target.path) else { return false }
+        do {
+            try FileManager.default.trashItem(at: target, resultingItemURL: nil)
+            refreshContent()
+            return true
+        } catch {
+            return false
+        }
     }
 
     /// 触发系统「本地网络」授权弹窗并探测权限状态（结果主线程回调）。

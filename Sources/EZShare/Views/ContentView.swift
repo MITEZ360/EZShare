@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var toastHideTask: DispatchWorkItem?
     @State private var draftText = ""
     @State private var isDropTarget = false
+    @State private var pendingDelete: ShareEntry?
 
     var body: some View {
         ZStack {
@@ -41,6 +42,21 @@ struct ContentView: View {
         }
         .frame(minWidth: 940, minHeight: 640)
         .overlay(alignment: .bottom) { toastOverlay }
+        .alert("删除项目", isPresented: Binding(
+            get: { pendingDelete != nil },
+            set: { if !$0 { pendingDelete = nil } }
+        )) {
+            Button("取消", role: .cancel) { pendingDelete = nil }
+            Button("移到废纸篓", role: .destructive) {
+                if let entry = pendingDelete {
+                    let ok = model.trashEntry(entry)
+                    showToast(ok ? "已移到废纸篓" : "删除失败")
+                }
+                pendingDelete = nil
+            }
+        } message: {
+            Text("确定要把“\(pendingDelete?.name ?? "")”移到废纸篓吗？")
+        }
         .animation(.spring(response: 0.3, dampingFraction: 0.85), value: toastText)
         .onAppear {
             model.refreshAddresses()
@@ -395,6 +411,9 @@ struct ContentView: View {
 
                 MiniButton(symbol: "arrow.up.forward.app", help: "在访达中显示") {
                     model.revealEntry(entry)
+                }
+                MiniButton(symbol: "trash", help: "移到废纸篓") {
+                    pendingDelete = entry
                 }
             }
             .padding(.vertical, 5)
