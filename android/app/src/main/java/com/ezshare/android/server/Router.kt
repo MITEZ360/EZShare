@@ -167,7 +167,7 @@ class Router(
                     if (stream == null) {
                         text("无法读取文件", 500)
                     } else {
-                        val len = file.length
+                        val len = file.size
                         var offset = 0L
                         var end = len - 1
                         var status = 200
@@ -185,7 +185,7 @@ class Router(
                                 extra["Content-Range"] = "bytes $offset-$end/$len"
                             }
                         }
-                        val length = if (len <= 0) 0 else end - offset + 1
+                        val length = if (len <= 0L) 0L else end - offset + 1L
                         Res(
                             status, MimeTypes.of(file.name),
                             ByteArray(0),
@@ -208,7 +208,7 @@ class Router(
                 if (file == null) {
                     okJson(JSONObject().put("ok", false).put("error", "无法创建文件"), 500)
                 } else {
-                    val output = root.openOutput(file.path)
+                    val output = root.openOutput(file.relativePath)
                     if (output == null) {
                         okJson(JSONObject().put("ok", false).put("error", "无法写入文件"), 500)
                     } else {

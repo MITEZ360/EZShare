@@ -126,7 +126,7 @@ class ShareRoot(private val context: Context, spec: String) {
 
     fun createFile(dir: String, name: String): ShareEntry? {
         val safe = safeParts(dir) ?: return null
-        val finalName = uniqueName(safe, sanitize(name)) ?: return null
+        val finalName = uniqueName(dir, sanitize(name)) ?: return null
         val rel = join(safe, finalName)
         if (fileRoot != null) {
             val parent = resolveFile(safe) ?: return null
@@ -143,7 +143,7 @@ class ShareRoot(private val context: Context, spec: String) {
 
     fun createDir(dir: String, name: String): ShareEntry? {
         val safe = safeParts(dir) ?: return null
-        val finalName = uniqueName(safe, sanitize(name)) ?: return null
+        val finalName = uniqueName(dir, sanitize(name)) ?: return null
         val rel = join(safe, finalName)
         if (fileRoot != null) {
             val parent = resolveFile(safe) ?: return null
