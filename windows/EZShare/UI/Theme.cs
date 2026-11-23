@@ -13,7 +13,7 @@ namespace EZShare.UI
         public static readonly Color TealDark = Color.FromRgb(0x0B, 0x7E, 0x74);
         public static readonly Color Blue = Color.FromRgb(0x2F, 0x6F, 0xED);
         public static readonly Color Background = Color.FromRgb(0xEE, 0xF1, 0xF5);
-        public static readonly Color Card = Colors.White;
+        public static readonly Color CardColor = Colors.White;
         public static readonly Color Ink = Color.FromRgb(0x16, 0x24, 0x2C);
         public static readonly Color Muted = Color.FromRgb(0x6B, 0x7A, 0x86);
         public static readonly Color Line = Color.FromRgb(0xE2, 0xE8, 0xEE);
@@ -27,7 +27,7 @@ namespace EZShare.UI
         public static SolidColorBrush InkBrush { get { return Brush(Ink); } }
         public static SolidColorBrush MutedBrush { get { return Brush(Muted); } }
         public static SolidColorBrush LineBrush { get { return Brush(Line); } }
-        public static SolidColorBrush CardBrush { get { return Brush(Card); } }
+        public static SolidColorBrush CardBrush { get { return Brush(CardColor); } }
 
         public static readonly TimeSpan Fast = TimeSpan.FromMilliseconds(150);
         public static readonly TimeSpan Normal = TimeSpan.FromMilliseconds(260);
