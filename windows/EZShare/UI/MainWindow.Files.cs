@@ -104,7 +104,7 @@ namespace EZShare.UI
                 hintPanel.Children.Add(startBtn);
                 hintPanel.Children.Add(new TextBlock {
                     Text = "本机服务未启动，启动后局域网内其他设备可以发现并加入。",
-                    FontSize = 11.5, Foreground = ColorFromHex(0x8A6D20), VerticalAlignment = VerticalAlignment.Center
+                    FontSize = 11.5, Foreground = new SolidColorBrush(ColorFromHex(0x8A6D20)), VerticalAlignment = VerticalAlignment.Center
                 });
                 hint.Child = hintPanel;
                 root.Children.Add(hint);

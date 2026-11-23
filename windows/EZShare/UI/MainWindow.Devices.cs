@@ -71,7 +71,7 @@ namespace EZShare.UI
                 dock.Children.Add(leaveBtn);
                 dock.Children.Add(new TextBlock {
                     Text = "当前已加入 " + (_model.RemoteInfo?.Name ?? "远端共享"),
-                    FontSize = 12, Foreground = Theme.Blue, VerticalAlignment = VerticalAlignment.Center
+                    FontSize = 12, Foreground = Theme.BlueBrush, VerticalAlignment = VerticalAlignment.Center
                 });
                 leaveBar.Child = dock;
                 root.Children.Add(leaveBar);

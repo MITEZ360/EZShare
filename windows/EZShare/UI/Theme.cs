@@ -52,7 +52,7 @@ namespace EZShare.UI
             control.RenderTransform = group;
             control.PreviewMouseDown += (s, e) => AnimateScale(scale, 0.965, 90);
             control.PreviewMouseUp += (s, e) => AnimateScale(scale, 1.0, 180);
-            control.PreviewMouseLeave += (s, e) => AnimateScale(scale, 1.0, 180);
+            control.MouseLeave += (s, e) => AnimateScale(scale, 1.0, 180);
         }
 
         private static void AnimateScale(ScaleTransform scale, double target, int ms)

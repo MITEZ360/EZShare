@@ -35,8 +35,8 @@ namespace EZShare.UI
                 using (var generator = new QRCodeGenerator())
                 using (var data = generator.CreateQrCode(url ?? "", QRCodeGenerator.ECCLevel.Q))
                 {
-                    var png = new PngByteQRCode(data);
-                    byte[] bytes = png.GetQRCode(8, false);
+                    var qr = new BitmapByteQRCode(data);
+                    byte[] bytes = qr.GetGraphic(8);
                     var bitmap = new BitmapImage();
                     using (var ms = new MemoryStream(bytes))
                     {
