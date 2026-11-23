@@ -183,6 +183,7 @@ struct StatusPill: View {
         .padding(.vertical, 4.5)
         .background(Capsule().fill(color.opacity(0.12)))
         .foregroundStyle(color)
+        .animation(.easeInOut(duration: 0.25), value: color)
     }
 }
 
@@ -246,16 +247,25 @@ struct PrimaryActionButton: View {
 struct MiniButton: View {
     let symbol: String
     var help: String = ""
+    var spinsOnTap: Bool = false
     let action: () -> Void
 
+    @State private var spinTurns = 0
+
     var body: some View {
-        Button(action: action) {
+        Button {
+            if spinsOnTap {
+                withAnimation(.easeInOut(duration: 0.55)) { spinTurns += 1 }
+            }
+            action()
+        } label: {
             HoverSurface(corner: 6, hover: 0.09) { active in
                 Image(systemName: symbol)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(active ? Color.primary : Color.secondary)
                     .frame(width: 24, height: 24)
                     .contentShape(Rectangle())
+                    .rotationEffect(.degrees(Double(spinTurns) * 360))
             }
         }
         .buttonStyle(.plain)
@@ -302,16 +312,24 @@ struct ValueChip: View {
 struct SoftButton: View {
     let title: String
     var symbol: String?
+    var spinsOnTap: Bool = false
     let action: () -> Void
 
     @State private var hovering = false
+    @State private var spinTurns = 0
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            if spinsOnTap {
+                withAnimation(.easeInOut(duration: 0.55)) { spinTurns += 1 }
+            }
+            action()
+        } label: {
             HStack(spacing: 4) {
                 if let symbol {
                     Image(systemName: symbol)
                         .font(.system(size: 9.5, weight: .semibold))
+                        .rotationEffect(.degrees(Double(spinTurns) * 360))
                 }
                 Text(title)
                     .font(.system(size: 11.5, weight: .medium))

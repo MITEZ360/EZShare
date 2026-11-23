@@ -20,6 +20,7 @@ struct ContentView: View {
                 header
                 if model.localNetworkStatus == .denied {
                     permissionBanner
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
                 HStack(alignment: .top, spacing: 14) {
                     VStack(spacing: 14) {
@@ -39,6 +40,7 @@ struct ContentView: View {
             .padding(.horizontal, 20)
             .padding(.top, 26)
             .padding(.bottom, 18)
+            .animation(.easeOut(duration: 0.25), value: model.localNetworkStatus)
         }
         .frame(minWidth: 940, minHeight: 640)
         .overlay(alignment: .bottom) { toastOverlay }
@@ -165,7 +167,7 @@ struct ContentView: View {
 
             Spacer(minLength: 10)
 
-            SoftButton(title: "重新检测", symbol: "arrow.clockwise") { model.probeLocalNetwork() }
+            SoftButton(title: "重新检测", symbol: "arrow.clockwise", spinsOnTap: true) { model.probeLocalNetwork() }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
@@ -186,7 +188,7 @@ struct ContentView: View {
             "共享目录",
             systemImage: "folder",
             trailing: AnyView(
-                MiniButton(symbol: "arrow.clockwise", help: "重新统计") {
+                MiniButton(symbol: "arrow.clockwise", help: "重新统计", spinsOnTap: true) {
                     model.refreshFolderInfo()
                 }
             )
@@ -315,8 +317,15 @@ struct ContentView: View {
             )
         ) {
             VStack(spacing: 8) {
-                if contentTab == 0 { fileBrowser } else { snippetList }
+                if contentTab == 0 {
+                    fileBrowser
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                } else {
+                    snippetList
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
             }
+            .animation(.easeOut(duration: 0.2), value: contentTab)
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
@@ -366,6 +375,7 @@ struct ContentView: View {
                             Divider().opacity(0.35)
                         }
                     }
+                    .animation(.easeOut(duration: 0.22), value: model.fileEntries.map(\.id))
                 }
             }
         }
@@ -420,6 +430,7 @@ struct ContentView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture { model.openEntry(entry) }
+        .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
     private var snippetList: some View {
@@ -444,6 +455,7 @@ struct ContentView: View {
                             Divider().opacity(0.35)
                         }
                     }
+                    .animation(.easeOut(duration: 0.22), value: model.snippets.map(\.id))
                 }
             }
         }
@@ -511,6 +523,7 @@ struct ContentView: View {
             }
             .padding(.vertical, 6)
         }
+        .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
     private func dateText(_ date: Date) -> String {
@@ -531,7 +544,7 @@ struct ContentView: View {
             "局域网设备",
             systemImage: "network",
             trailing: AnyView(
-                MiniButton(symbol: "arrow.clockwise", help: "重新发现") { model.refreshPeers() }
+                MiniButton(symbol: "arrow.clockwise", help: "重新发现", spinsOnTap: true) { model.refreshPeers() }
             )
         ) {
             if model.peers.isEmpty {

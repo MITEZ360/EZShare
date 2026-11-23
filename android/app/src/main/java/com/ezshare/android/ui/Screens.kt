@@ -11,6 +11,12 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +40,6 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.LaptopMac
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.AlertDialog
@@ -299,9 +304,7 @@ private fun ConnectScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { ShareManager.discovery.refresh() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "重新发现")
-                    }
+                    RefreshIconButton(onClick = { ShareManager.discovery.refresh() })
                 }
             )
         }
@@ -521,14 +524,21 @@ private fun MainShell(
         }
     ) { padding ->
         Box(Modifier.padding(padding).fillMaxSize()) {
-            when (tab) {
-                0 -> FilesScreen(state, onPickFiles, onPickFolder, onMkdir, onOpen, onDelete)
-                1 -> TextsScreen(state, onSend, onCopy, onDeleteText)
-                2 -> DevicesScreen(state, onJoin)
-                3 -> SettingsScreen(state, onPickTree, onRegenerateCode, onUpdateSettings, onStopLocal, onLeaveRemote)
+            Crossfade(targetState = tab, animationSpec = tween(180), label = "tab") { target ->
+                when (target) {
+                    0 -> FilesScreen(state, onPickFiles, onPickFolder, onMkdir, onOpen, onDelete)
+                    1 -> TextsScreen(state, onSend, onCopy, onDeleteText)
+                    2 -> DevicesScreen(state, onJoin)
+                    3 -> SettingsScreen(state, onPickTree, onRegenerateCode, onUpdateSettings, onStopLocal, onLeaveRemote)
+                }
             }
-            if (state.busy) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
+            AnimatedVisibility(
+                visible = state.busy,
+                enter = fadeIn(animationSpec = tween(150)),
+                exit = fadeOut(animationSpec = tween(150)),
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -543,18 +553,21 @@ private fun StatusButton(
     dot: Color,
     onClick: () -> Unit
 ) {
+    val animContainer by animateColorAsState(container, tween(220), label = "statusContainer")
+    val animContent by animateColorAsState(content, tween(220), label = "statusContent")
+    val animDot by animateColorAsState(dot, tween(220), label = "statusDot")
     Button(
         onClick = onClick,
         modifier = Modifier.height(34.dp),
         shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = container, contentColor = content),
+        colors = ButtonDefaults.buttonColors(containerColor = animContainer, contentColor = animContent),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 11.dp, vertical = 0.dp)
     ) {
-        Box(Modifier.size(7.dp).clip(RoundedCornerShape(50)).background(dot))
+        Box(Modifier.size(7.dp).clip(RoundedCornerShape(50)).background(animDot))
         Spacer(Modifier.width(6.dp))
         Column(horizontalAlignment = Alignment.Start) {
             Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
-            Text(hint, style = MaterialTheme.typography.labelSmall, color = content.copy(alpha = 0.72f))
+            Text(hint, style = MaterialTheme.typography.labelSmall, color = animContent.copy(alpha = 0.72f))
         }
     }
 }
@@ -569,9 +582,7 @@ private fun DevicesScreen(state: UiState, onJoin: (Peer) -> Unit) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 SectionTitle(text = "局域网设备", modifier = Modifier.weight(1f))
-                IconButton(onClick = { ShareManager.discovery.refresh() }, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Filled.Refresh, contentDescription = "刷新", modifier = Modifier.size(18.dp))
-                }
+                RefreshIconButton(onClick = { ShareManager.discovery.refresh() }, modifier = Modifier.size(38.dp))
             }
         }
         if (state.peers.isEmpty()) {

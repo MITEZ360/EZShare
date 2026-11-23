@@ -193,6 +193,19 @@ footer .dot{width:4px;height:4px;border-radius:50%;background:currentColor;opaci
 .snippet .act{opacity:0;transition:.15s}
 .snippet:hover .act{opacity:1}
 @media (max-width:720px){.snippet .act{opacity:1}}
+
+/* ---------- restrained motion ---------- */
+@keyframes ez-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+tbody tr{animation:ez-enter .26s ease-out both}
+tbody tr:nth-child(2){animation-delay:.02s}
+tbody tr:nth-child(3){animation-delay:.04s}
+tbody tr:nth-child(4){animation-delay:.06s}
+tbody tr:nth-child(n+5){animation-delay:.08s}
+.snippet{animation:ez-enter .26s ease-out both}
+#modal.on .dialog{animation:ez-enter .2s ease-out both}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 """#
 
     static let js = #"""

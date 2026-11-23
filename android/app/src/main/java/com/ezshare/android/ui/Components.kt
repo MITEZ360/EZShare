@@ -1,8 +1,16 @@
 package com.ezshare.android.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,19 +23,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -37,6 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @Composable
 fun BrandMark(
@@ -86,6 +102,50 @@ fun BrandMark(
         }
         drawPath(arrow, white)
     }
+}
+
+/// 刷新按钮：点击时图标平滑旋转一圈，给出明确的"正在刷新"反馈。
+@Composable
+fun RefreshIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String = "刷新"
+) {
+    val rotation = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
+    IconButton(onClick = {
+        if (!rotation.isRunning) {
+            scope.launch {
+                rotation.animateTo(
+                    targetValue = rotation.value + 360f,
+                    animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing)
+                )
+            }
+        }
+        onClick()
+    }, modifier = modifier) {
+        Icon(
+            Icons.Filled.Refresh,
+            contentDescription = contentDescription,
+            modifier = Modifier.rotate(rotation.value)
+        )
+    }
+}
+
+/// 按压回弹：与调用方共享 interactionSource，按下时轻微缩小、松开弹簧回弹。
+/// 调用方需在自己的 clickable 中传入同一个 interactionSource。
+@Composable
+fun Modifier.pressScale(
+    interaction: MutableInteractionSource,
+    pressedValue: Float = 0.97f
+): Modifier {
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) pressedValue else 1f,
+        animationSpec = spring(dampingFraction = 0.65f, stiffness = Spring.StiffnessMedium),
+        label = "pressScale"
+    )
+    return this.scale(scale)
 }
 
 @Composable

@@ -2,6 +2,7 @@ package com.ezshare.android.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,10 +131,12 @@ fun FilesScreen(
                 item { EzEmptyState(Icons.Filled.Folder, "这里还是空的", "点击右下角添加文件") }
             } else {
                 items(state.fileEntries, key = { it.relativePath }) { entry ->
+                    val press = remember { MutableInteractionSource() }
                     Row(
                         Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
                             .background(MaterialTheme.colorScheme.surface)
-                            .clickable { onOpen(entry) }
+                            .clickable(interactionSource = press, indication = null) { onOpen(entry) }
+                            .pressScale(press)
                             .padding(horizontal = 12.dp, vertical = 9.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
