@@ -93,6 +93,7 @@ jobs:
             "" \
             "The access code can be viewed or disabled in the app settings." \
             > /tmp/ez-release-notes.md
+          gh release delete "$GITHUB_REF_NAME" --yes >/dev/null 2>&1 || true
           gh release create "$GITHUB_REF_NAME" \
             --title "EZShare $VERSION" \
             --notes-file /tmp/ez-release-notes.md \
