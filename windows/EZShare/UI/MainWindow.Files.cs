@@ -53,7 +53,7 @@ namespace EZShare.UI
             if (!string.IsNullOrEmpty(_model.BrowsePath))
             {
                 var crumb = new TextBlock {
-                    Text = "共享根 / " + _model.BrowsePath.Replace('/', ' / '),
+                    Text = "共享根 / " + _model.BrowsePath.Replace("/", " / "),
                     FontSize = 11, Foreground = Theme.MutedBrush, Margin = new Thickness(0, 0, 0, 10)
                 };
                 root.Children.Add(crumb);
