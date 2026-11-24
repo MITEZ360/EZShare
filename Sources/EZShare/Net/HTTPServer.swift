@@ -67,6 +67,11 @@ final class HTTPServer {
             txt["port"] = String(nwPort.rawValue)
             txt["v"] = "1"
             txt["code"] = router.snapshot.requireCode ? "1" : "0"
+            // 广播首选 IPv4：部分客户端（Android NSD）解析主机时可能拿到
+            // link-local IPv6（fe80::…%iface），直接拼进 URL 会请求失败。
+            if let ip = NetworkInfo.ipv4().first?.ip {
+                txt["ipv4"] = ip
+            }
             let serviceName = "\(deviceName)-\(nwPort.rawValue)" + (router.snapshot.requireCode ? "-lock" : "")
             listener.service = NWListener.Service(
                 name: serviceName,

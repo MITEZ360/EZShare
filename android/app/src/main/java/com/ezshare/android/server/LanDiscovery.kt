@@ -6,6 +6,8 @@ import android.net.nsd.NsdServiceInfo
 import android.net.wifi.WifiManager
 import android.os.Handler
 import android.os.Looper
+import java.net.Inet4Address
+import java.net.InetAddress
 
 /// 通过 mDNS 发布本机服务并发现局域网内其他 EZShare 实例。
 class LanDiscovery(context: Context) {
@@ -79,10 +81,20 @@ class LanDiscovery(context: Context) {
                 manager?.resolveService(service, object : NsdManager.ResolveListener {
                     override fun onResolveFailed(service: NsdServiceInfo, errorCode: Int) {}
                     override fun onServiceResolved(resolved: NsdServiceInfo) {
-                        val address = resolved.host?.hostAddress ?: return
+                        val attrs = resolved.attributes
                         val resolvedName = resolved.serviceName ?: "EZShare"
-                        val requiresCode = resolvedName.endsWith("-lock")
-                        val peer = Peer(resolvedName.removeSuffix("-lock"), address, resolved.port, requiresCode)
+                        // 访问码标记：TXT 的 code 字段优先，服务名 -lock 兜底
+                        val codeFlag = attrs["code"]?.let { String(it, Charsets.UTF_8) }
+                        val requiresCode = codeFlag == "1" || resolvedName.endsWith("-lock")
+
+                        // 地址选择：优先 TXT 里的 IPv4，其次过滤后的解析地址。
+                        // NSD 常返回 fe80::...%wlan0 这类 link-local IPv6，直接拼进 URL 会请求失败。
+                        val txtIpv4 = attrs["ipv4"]?.let { String(it, Charsets.UTF_8) }
+                        val host = txtIpv4?.takeIf { it.isNotBlank() } ?: preferredHost(resolved.host)
+                        if (host.isNullOrBlank()) return
+
+                        val name = resolvedName.removeSuffix("-lock")
+                        val peer = Peer(name, host, resolved.port, requiresCode)
                         synchronized(peers) { peers[peer.url] = peer }
                         emit(peers.values.sortedBy { it.name })
                     }
@@ -111,6 +123,16 @@ class LanDiscovery(context: Context) {
 
     private fun emit(list: List<Peer>) {
         main.post { onPeers?.invoke(list) }
+    }
+
+    /// 从解析结果里挑一个可直接放进 URL 的主机：优先 IPv4，跳过回环与 link-local。
+    /// IPv6 字面量加方括号，否则 "http://fe80::1%wlan0:8080" 不是合法 URL。
+    private fun preferredHost(address: InetAddress?): String? {
+        if (address == null) return null
+        if (address.isLoopbackAddress || address.isLinkLocalAddress) return null
+        val raw = address.hostAddress ?: return null
+        if (address is Inet4Address) return raw
+        return if (raw.contains(":")) "[$raw]" else raw
     }
 
     companion object {
