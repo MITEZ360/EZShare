@@ -2,12 +2,21 @@ import SwiftUI
 import AppKit
 
 enum Palette {
-    static let accent = Color(red: 0.184, green: 0.420, blue: 1.000)
-    static let accentAlt = Color(red: 0.071, green: 0.710, blue: 0.647)
-    static let running = Color(red: 0.086, green: 0.639, blue: 0.400)
-    static let warning = Color(red: 0.949, green: 0.600, blue: 0.129)
-    static let danger = Color(red: 0.898, green: 0.282, blue: 0.302)
+    // 与 Android/Windows/Web 共用：近单色灰阶 + 单一 teal 强调色。
+    static let accent = Color(red: 0.000, green: 0.761, blue: 0.604)
+    static let accentDeep = Color(red: 0.031, green: 0.471, blue: 0.400)
+    static let running = Color(red: 0.000, green: 0.761, blue: 0.604)
+    static let warning = Color(red: 0.851, green: 0.576, blue: 0.106)
+    static let danger = Color(red: 0.753, green: 0.224, blue: 0.169)
     static let idle = Color(nsColor: .secondaryLabelColor)
+
+    static func background(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(red: 0.118, green: 0.118, blue: 0.118)
+                        : Color(red: 0.969, green: 0.969, blue: 0.969)
+    }
+    static func card(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(red: 0.145, green: 0.145, blue: 0.145) : .white
+    }
 }
 
 /// 品牌图形：与网页端 brandMark 完全一致的「托盘 + 上箭头」白色线条，
@@ -41,14 +50,8 @@ struct BrandMark: View {
     var size: CGFloat = 34
 
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.29, style: .continuous)
-            .fill(
-                LinearGradient(
-                    colors: [Palette.accent, Palette.accentAlt],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+        RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
+            .fill(Palette.accent)
             .frame(width: size, height: size)
             .overlay(
                 BrandMarkShape()
@@ -66,28 +69,7 @@ struct AppBackground: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: scheme == .dark
-                    ? [Color(red: 0.063, green: 0.078, blue: 0.106), Color(red: 0.086, green: 0.102, blue: 0.129)]
-                    : [Color(red: 0.965, green: 0.973, blue: 0.992), Color(red: 0.933, green: 0.949, blue: 0.976)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            RadialGradient(
-                colors: [Palette.accent.opacity(scheme == .dark ? 0.16 : 0.10), .clear],
-                center: .init(x: 0.08, y: 0.0),
-                startRadius: 4,
-                endRadius: 620
-            )
-            RadialGradient(
-                colors: [Palette.accentAlt.opacity(scheme == .dark ? 0.10 : 0.07), .clear],
-                center: .init(x: 1.0, y: 1.0),
-                startRadius: 4,
-                endRadius: 560
-            )
-        }
-        .ignoresSafeArea()
+        Palette.background(scheme).ignoresSafeArea()
     }
 }
 
@@ -96,6 +78,7 @@ struct Card<Content: View>: View {
     let systemImage: String
     var trailing: AnyView?
     @ViewBuilder var content: () -> Content
+    @Environment(\.colorScheme) private var scheme
 
     init(
         _ title: String,
@@ -117,10 +100,10 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 13) {
             HStack(spacing: 7) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundStyle(.secondary)
                 Text(title)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.secondary)
                 Spacer(minLength: 8)
                 if let trailing { trailing }
@@ -129,12 +112,8 @@ struct Card<Content: View>: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            shape
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.92))
-                .overlay(shape.strokeBorder(Color.primary.opacity(0.055), lineWidth: 1))
-        )
-        .shadow(color: .black.opacity(0.055), radius: 14, x: 0, y: 7)
+        .background(shape.fill(Palette.card(scheme)))
+        .shadow(color: .black.opacity(scheme == .dark ? 0 : 0.05), radius: 5, x: 0, y: 2)
     }
 }
 
@@ -174,14 +153,13 @@ struct StatusPill: View {
             Circle()
                 .fill(color)
                 .frame(width: 6, height: 6)
-                .shadow(color: color.opacity(0.65), radius: 3)
             Text(text)
-                .font(.system(size: 11.5, weight: .medium))
+                .font(.system(size: 12, weight: .medium))
                 .lineLimit(1)
         }
-        .padding(.horizontal, 9)
-        .padding(.vertical, 4.5)
-        .background(Capsule().fill(color.opacity(0.12)))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(Capsule().fill(color.opacity(0.10)))
         .foregroundStyle(color)
         .animation(.easeInOut(duration: 0.25), value: color)
     }
@@ -215,21 +193,9 @@ struct PrimaryActionButton: View {
             .padding(.horizontal, 15)
             .frame(height: 32)
             .background(
-                Capsule().fill(
-                    isRunning
-                        ? AnyShapeStyle(Color.primary.opacity(0.07))
-                        : AnyShapeStyle(LinearGradient(
-                            colors: [Palette.accent, Palette.accent.opacity(0.86)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
-                )
-            )
-            .overlay(
-                Capsule().strokeBorder(Color.primary.opacity(isRunning ? 0.08 : 0.0), lineWidth: 1)
+                Capsule().fill(isRunning ? AnyShapeStyle(Color.primary.opacity(0.06)) : AnyShapeStyle(Palette.accent))
             )
             .foregroundStyle(isRunning ? Color.primary : Color.white)
-            .shadow(color: isRunning ? .clear : Palette.accent.opacity(0.35), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
         .disabled(isBusy)

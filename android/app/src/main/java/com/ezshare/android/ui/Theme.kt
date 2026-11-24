@@ -14,94 +14,95 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val BrandTeal = Color(0xFF0D9488)
-private val BrandBlue = Color(0xFF2563EB)
-private val BrandCyan = Color(0xFF0891B2)
+// 统一设计语言：近单色灰阶分层 + 单一 teal 强调色，与 Mac/Windows/Web 一致。
+private val Accent = Color(0xFF00C29A)
+private val AccentDeep = Color(0xFF087866)
+private val AccentSoft = Color(0x1A00C29A)
 
 private val LightColors = lightColorScheme(
-    primary = BrandTeal,
+    primary = Accent,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFD6F5EF),
-    onPrimaryContainer = Color(0xFF064E45),
-    secondary = BrandBlue,
+    primaryContainer = AccentSoft,
+    onPrimaryContainer = AccentDeep,
+    secondary = Color(0xFF6B6B6B),
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFDFEBFF),
-    onSecondaryContainer = Color(0xFF173D80),
-    tertiary = BrandCyan,
+    secondaryContainer = Color(0xFFF2F2F2),
+    onSecondaryContainer = Color(0xFF373737),
+    tertiary = Color(0xFF6B6B6B),
     onTertiary = Color.White,
-    tertiaryContainer = Color(0xFFD4F1FA),
-    onTertiaryContainer = Color(0xFF0A3C4D),
-    background = Color(0xFFEEF1F5),
-    onBackground = Color(0xFF12232B),
-    surface = Color.White,
-    onSurface = Color(0xFF12232B),
-    surfaceVariant = Color(0xFFE2E8EE),
-    onSurfaceVariant = Color(0xFF4B5F6B),
-    surfaceContainerLowest = Color(0xFFF7F9FB),
-    surfaceContainerLow = Color(0xFFF3F6F9),
-    surfaceContainer = Color(0xFFEAEFF4),
-    surfaceContainerHigh = Color(0xFFE1E7EE),
-    surfaceContainerHighest = Color(0xFFD8E0E8),
-    outline = Color(0xFFB4C2CF),
-    outlineVariant = Color(0xFFD5DEE7),
-    error = Color(0xFFD92D3B),
+    tertiaryContainer = Color(0xFFF2F2F2),
+    onTertiaryContainer = Color(0xFF373737),
+    background = Color(0xFFF7F7F7),
+    onBackground = Color(0xFF1A1A1A),
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF1A1A1A),
+    surfaceVariant = Color(0xFFF2F2F2),
+    onSurfaceVariant = Color(0xFF808080),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFFAFAFA),
+    surfaceContainer = Color(0xFFF7F7F7),
+    surfaceContainerHigh = Color(0xFFF2F2F2),
+    surfaceContainerHighest = Color(0xFFEBEBEB),
+    outline = Color(0xFFE6E6E6),
+    outlineVariant = Color(0xFFF0F0F0),
+    error = Color(0xFFC0392B),
     onError = Color.White,
-    errorContainer = Color(0xFFFFE4E6),
-    onErrorContainer = Color(0xFF8A1420)
+    errorContainer = Color(0xFFFCECEA),
+    onErrorContainer = Color(0xFF8A241A)
 )
 
 private val DarkColors = darkColorScheme(
-    primary = Color(0xFF5EEAD4),
-    onPrimary = Color(0xFF003A33),
-    primaryContainer = Color(0xFF0F6B60),
-    onPrimaryContainer = Color(0xFFC7FFF3),
-    secondary = Color(0xFF8FB6FF),
-    onSecondary = Color(0xFF102D5C),
-    secondaryContainer = Color(0xFF1D3E75),
-    onSecondaryContainer = Color(0xFFDCE8FF),
-    tertiary = Color(0xFF7DD3EF),
-    onTertiary = Color(0xFF063342),
-    tertiaryContainer = Color(0xFF0E4A5B),
-    onTertiaryContainer = Color(0xFFD6F4FD),
-    background = Color(0xFF0A1218),
-    onBackground = Color(0xFFE4EFF1),
-    surface = Color(0xFF1A2A33),
-    onSurface = Color(0xFFE4EFF1),
-    surfaceVariant = Color(0xFF1D353C),
-    onSurfaceVariant = Color(0xFFA9C2C8),
-    surfaceContainerLowest = Color(0xFF081417),
-    surfaceContainerLow = Color(0xFF102126),
-    surfaceContainer = Color(0xFF152A31),
-    surfaceContainerHigh = Color(0xFF1B343B),
-    surfaceContainerHighest = Color(0xFF223F46),
-    outline = Color(0xFF3E5B63),
-    outlineVariant = Color(0xFF2C464D),
-    error = Color(0xFFFF9B9B),
-    onError = Color(0xFF4A0D14),
-    errorContainer = Color(0xFF6E1A23),
-    onErrorContainer = Color(0xFFFFD5D8)
+    primary = Color(0xFF2BD1B3),
+    onPrimary = Color(0xFF06322A),
+    primaryContainer = Color(0x1F2BD1B3),
+    onPrimaryContainer = Color(0xFFA9F3E4),
+    secondary = Color(0xFFA6A6A6),
+    onSecondary = Color(0xFF1E1E1E),
+    secondaryContainer = Color(0xFF2E2E2E),
+    onSecondaryContainer = Color(0xFFE0E0E0),
+    tertiary = Color(0xFFA6A6A6),
+    onTertiary = Color(0xFF1E1E1E),
+    tertiaryContainer = Color(0xFF2E2E2E),
+    onTertiaryContainer = Color(0xFFE0E0E0),
+    background = Color(0xFF1E1E1E),
+    onBackground = Color(0xFFF2F2F2),
+    surface = Color(0xFF252525),
+    onSurface = Color(0xFFF2F2F2),
+    surfaceVariant = Color(0xFF2C2C2C),
+    onSurfaceVariant = Color(0xFFA6A6A6),
+    surfaceContainerLowest = Color(0xFF1A1A1A),
+    surfaceContainerLow = Color(0xFF212121),
+    surfaceContainer = Color(0xFF252525),
+    surfaceContainerHigh = Color(0xFF2C2C2C),
+    surfaceContainerHighest = Color(0xFF333333),
+    outline = Color(0xFF3A3A3A),
+    outlineVariant = Color(0xFF303030),
+    error = Color(0xFFF08B82),
+    onError = Color(0xFF4A0E08),
+    errorContainer = Color(0xFF63231C),
+    onErrorContainer = Color(0xFFFFD6D2)
 )
 
 private val AppTypography = Typography(
-    headlineMedium = TextStyle(fontSize = 22.sp, lineHeight = 28.sp, fontWeight = FontWeight.SemiBold),
-    headlineSmall = TextStyle(fontSize = 19.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold),
-    titleLarge = TextStyle(fontSize = 17.sp, lineHeight = 22.sp, fontWeight = FontWeight.SemiBold),
-    titleMedium = TextStyle(fontSize = 14.sp, lineHeight = 19.sp, fontWeight = FontWeight.SemiBold),
-    titleSmall = TextStyle(fontSize = 13.sp, lineHeight = 18.sp, fontWeight = FontWeight.Medium),
-    bodyLarge = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
-    bodyMedium = TextStyle(fontSize = 13.sp, lineHeight = 18.sp),
-    bodySmall = TextStyle(fontSize = 11.5.sp, lineHeight = 15.sp),
-    labelLarge = TextStyle(fontSize = 12.5.sp, lineHeight = 17.sp, fontWeight = FontWeight.Medium),
-    labelMedium = TextStyle(fontSize = 11.5.sp, lineHeight = 15.sp, fontWeight = FontWeight.Medium),
-    labelSmall = TextStyle(fontSize = 10.5.sp, lineHeight = 14.sp, fontWeight = FontWeight.Medium)
+    headlineMedium = TextStyle(fontSize = 20.sp, lineHeight = 28.sp, fontWeight = FontWeight.SemiBold),
+    headlineSmall = TextStyle(fontSize = 18.sp, lineHeight = 26.sp, fontWeight = FontWeight.SemiBold),
+    titleLarge = TextStyle(fontSize = 16.sp, lineHeight = 24.sp, fontWeight = FontWeight.Medium),
+    titleMedium = TextStyle(fontSize = 14.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium),
+    titleSmall = TextStyle(fontSize = 13.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium),
+    bodyLarge = TextStyle(fontSize = 14.sp, lineHeight = 22.sp),
+    bodyMedium = TextStyle(fontSize = 14.sp, lineHeight = 22.sp),
+    bodySmall = TextStyle(fontSize = 12.sp, lineHeight = 18.sp),
+    labelLarge = TextStyle(fontSize = 13.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium),
+    labelMedium = TextStyle(fontSize = 12.sp, lineHeight = 18.sp, fontWeight = FontWeight.Medium),
+    labelSmall = TextStyle(fontSize = 11.sp, lineHeight = 16.sp, fontWeight = FontWeight.Medium)
 )
 
 private val AppShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(10.dp),
-    medium = RoundedCornerShape(14.dp),
-    large = RoundedCornerShape(20.dp),
-    extraLarge = RoundedCornerShape(28.dp)
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(16.dp),
+    extraLarge = RoundedCornerShape(24.dp)
 )
 
 @Composable

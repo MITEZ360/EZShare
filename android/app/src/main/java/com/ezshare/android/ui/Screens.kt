@@ -34,14 +34,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.LaptopMac
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.LaptopMac
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.QrCode
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -68,8 +68,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -319,7 +317,7 @@ private fun ConnectScreen(
             if (state.peers.isEmpty()) {
                 item {
                     EzEmptyState(
-                        icon = Icons.Filled.Wifi,
+                        icon = Icons.Outlined.Wifi,
                         title = "未发现其他设备",
                         subtitle = "确保对方已启动共享，且与本机连接同一 Wi-Fi"
                     )
@@ -363,24 +361,22 @@ private fun BrandHeader() {
         modifier = Modifier
             .fillMaxWidth()
             .height(126.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .background(Brush.linearGradient(listOf(
-                Color(0xFF0EA5A0), Color(0xFF3B82F6)
-            )))
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BrandMark(size = 24)
                 Spacer(Modifier.width(8.dp))
-                Text("局域网共享", color = Color.White, style = MaterialTheme.typography.labelLarge)
+                Text("局域网共享", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelLarge)
             }
             Column {
-                Text("随时分享，轻松连接", color = Color.White,
+                Text("随时分享，轻松连接", color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
                 Text(
                     "发现同一网络内的共享，或直接创建自己的共享",
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -402,7 +398,7 @@ private fun PeerCard(peer: Peer, onJoin: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = if (peer.name.contains("mac", ignoreCase = true)) Icons.Filled.LaptopMac else Icons.Filled.Android,
+                imageVector = if (peer.name.contains("mac", ignoreCase = true)) Icons.Outlined.LaptopMac else Icons.Outlined.Android,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(19.dp)
@@ -415,7 +411,7 @@ private fun PeerCard(peer: Peer, onJoin: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (peer.requiresCode) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Filled.Lock, contentDescription = null,
+                    Icon(Icons.Outlined.Lock, contentDescription = null,
                         tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(11.dp))
                     Spacer(Modifier.width(3.dp))
                     Text("需要访问码", style = MaterialTheme.typography.labelSmall,
@@ -472,7 +468,7 @@ private fun MainShell(
                 },
                 actions = {
                     if (state.mode == SessionMode.LOCAL) {
-                        IconButton(onClick = onShowQr) { Icon(Icons.Filled.QrCode, contentDescription = "二维码") }
+                        IconButton(onClick = onShowQr) { Icon(Icons.Outlined.QrCode, contentDescription = "二维码") }
                         StatusButton(
                             label = "共享中",
                             hint = "点击停止",
@@ -499,25 +495,25 @@ private fun MainShell(
                 NavigationBarItem(
                     selected = tab == 0,
                     onClick = { tab = 0 },
-                    icon = { Icon(Icons.Filled.Folder, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    icon = { Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(20.dp)) },
                     label = { Text("文件", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 1,
                     onClick = { tab = 1 },
-                    icon = { Icon(Icons.Filled.Article, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    icon = { Icon(Icons.Outlined.Article, contentDescription = null, modifier = Modifier.size(20.dp)) },
                     label = { Text("文本", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 2,
                     onClick = { tab = 2 },
-                    icon = { Icon(Icons.Filled.Wifi, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    icon = { Icon(Icons.Outlined.Wifi, contentDescription = null, modifier = Modifier.size(20.dp)) },
                     label = { Text("设备", style = MaterialTheme.typography.labelSmall) }
                 )
                 NavigationBarItem(
                     selected = tab == 3,
                     onClick = { tab = 3 },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
                     label = { Text("设置", style = MaterialTheme.typography.labelSmall) }
                 )
             }
@@ -586,7 +582,7 @@ private fun DevicesScreen(state: UiState, onJoin: (Peer) -> Unit) {
             }
         }
         if (state.peers.isEmpty()) {
-            item { EzEmptyState(Icons.Filled.Wifi, "未发现其他设备", "点击刷新按钮重新扫描") }
+            item { EzEmptyState(Icons.Outlined.Wifi, "未发现其他设备", "点击刷新按钮重新扫描") }
         } else {
             items(state.peers, key = { it.url }) { peer ->
                 PeerCard(peer = peer, onJoin = { onJoin(peer) })

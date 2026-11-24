@@ -17,7 +17,7 @@ namespace EZShare.UI
 
             if (canWrite)
             {
-                var composer = Theme.Card(12);
+                var composer = Theme.Card(16);
                 var inner = new StackPanel { Margin = new Thickness(12) };
                 _textInput = new TextBox {
                     Height = 92, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap,
@@ -44,7 +44,7 @@ namespace EZShare.UI
                 root.Children.Add(composer);
             }
 
-            var listCard = Theme.Card(12);
+            var listCard = Theme.Card(16);
             listCard.Margin = new Thickness(0, 12, 0, 0);
             _textList = new StackPanel { Margin = new Thickness(6) };
 
@@ -79,8 +79,8 @@ namespace EZShare.UI
         private Border BuildTextTile(TextSnippet snippet, int index)
         {
             var tile = new Border {
-                Background = new SolidColorBrush(Color.FromRgb(0xF8, 0xFA, 0xFC)),
-                CornerRadius = new CornerRadius(9), Margin = new Thickness(6, 4, 6, 4), Padding = new Thickness(11)
+                Background = new SolidColorBrush(Color.FromRgb(0xF2, 0xF2, 0xF2)),
+                CornerRadius = new CornerRadius(10), Margin = new Thickness(6, 4, 6, 4), Padding = new Thickness(11)
             };
             var sp = new StackPanel();
             var head = new DockPanel { LastChildFill = false };

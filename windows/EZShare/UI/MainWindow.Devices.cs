@@ -60,8 +60,8 @@ namespace EZShare.UI
             if (_model.IsJoined)
             {
                 var leaveBar = new Border {
-                    Background = new SolidColorBrush(Color.FromRgb(0xE7, 0xEF, 0xFD)),
-                    CornerRadius = new CornerRadius(9), Padding = new Thickness(12, 10, 12, 10),
+                    Background = new SolidColorBrush(Color.FromRgb(0xF2, 0xF2, 0xF2)),
+                    CornerRadius = new CornerRadius(10), Padding = new Thickness(12, 10, 12, 10),
                     Margin = new Thickness(0, 14, 0, 0)
                 };
                 var dock = new DockPanel();
@@ -82,7 +82,7 @@ namespace EZShare.UI
 
         private Border BuildPeerTile(DiscoveredPeer peer, int index)
         {
-            var card = Theme.Card(11);
+            var card = Theme.Card(16);
             card.Margin = new Thickness(0, 0, 0, 8);
             card.Padding = new Thickness(14, 12, 14, 12);
             var dock = new DockPanel { LastChildFill = false };

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="EZShare" Height="660" Width="920"
         MinHeight="560" MinWidth="760"
-        Background="#EEF1F5"
+        Background="#F7F7F7"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <!-- 顶部标题栏 -->
-        <Border x:Name="Header" Grid.Row="0" Background="White" BorderBrush="#E2E8EE" BorderThickness="0,0,0,1" Padding="22,16,22,14">
+        <Border x:Name="Header" Grid.Row="0" Background="#FAFAFA" Padding="22,16,22,14">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -22,21 +22,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="34" Height="34" CornerRadius="9" Background="#0E9A8E" Margin="0,0,10,0">
+                    <Border Width="34" Height="34" CornerRadius="10" Background="#00C29A" Margin="0,0,10,0">
                         <TextBlock Text="⇧" FontSize="22" Foreground="White"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    FontWeight="SemiBold"/>
                     </Border>
                     <StackPanel>
-                        <TextBlock Text="EZShare" FontSize="15" FontWeight="SemiBold" Foreground="#16242C"/>
-                        <TextBlock x:Name="ShareNameText" Text="EZShare" FontSize="11" Foreground="#6B7A86"/>
+                        <TextBlock Text="EZShare" FontSize="15" FontWeight="SemiBold" Foreground="#1A1A1A"/>
+                        <TextBlock x:Name="ShareNameText" Text="EZShare" FontSize="11" Foreground="#808080"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border x:Name="StatusPill" CornerRadius="12" Padding="11,6" Background="#E8F5F1" Margin="0,0,8,0" Cursor="Hand">
+                    <Border x:Name="StatusPill" CornerRadius="12" Padding="11,6" Background="#E6F8F3" Margin="0,0,8,0" Cursor="Hand">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="#109A6A" Margin="0,0,6,0"/>
-                            <TextBlock x:Name="StatusText" Text="未启动" FontSize="11.5" FontWeight="SemiBold" Foreground="#109A6A"/>
+                            <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="#00C29A" Margin="0,0,6,0"/>
+                            <TextBlock x:Name="StatusText" Text="未启动" FontSize="11.5" FontWeight="SemiBold" Foreground="#00C29A"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -44,7 +44,7 @@
         </Border>
 
         <!-- 标签栏 -->
-        <Border Grid.Row="1" Background="White" BorderBrush="#E2E8EE" BorderThickness="0,0,0,1" Padding="22,0,22,0">
+        <Border Grid.Row="1" Background="#FAFAFA" Padding="22,0,22,0">
             <StackPanel x:Name="Tabs" Orientation="Horizontal">
                 <Button x:Name="TabFiles" Content="文件" Tag="0" Style="{StaticResource TabActive}" Click="Tab_Click" Margin="0,0,6,0"/>
                 <Button x:Name="TabTexts" Content="文本" Tag="1" Style="{StaticResource TabStyle}" Click="Tab_Click" Margin="0,0,6,0"/>
@@ -59,22 +59,22 @@
         </Border>
 
         <!-- 底部状态栏 -->
-        <Border Grid.Row="3" Background="#F7F9FB" BorderBrush="#E2E8EE" BorderThickness="0,1,0,0" Padding="22,9,22,9">
+        <Border Grid.Row="3" Background="#FAFAFA" Padding="22,9,22,9">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="FooterText" Text="局域网直连 · 不经云端" FontSize="11" Foreground="#8A98A3" VerticalAlignment="Center"/>
-                <TextBlock x:Name="PortText" Grid.Column="1" Text="端口 8080" FontSize="11" Foreground="#8A98A3" VerticalAlignment="Center"/>
+                <TextBlock x:Name="FooterText" Text="局域网直连 · 不经云端" FontSize="11" Foreground="#808080" VerticalAlignment="Center"/>
+                <TextBlock x:Name="PortText" Grid.Column="1" Text="端口 8080" FontSize="11" Foreground="#808080" VerticalAlignment="Center"/>
             </Grid>
         </Border>
 
         <!-- Toast -->
         <Border x:Name="Toast" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                Background="#16242C" CornerRadius="9" Padding="14,9" Margin="0,0,0,24"
+                Background="White" CornerRadius="12" Padding="14,10" Margin="0,0,0,24"
                 Opacity="0" IsHitTestVisible="False">
-            <TextBlock x:Name="ToastText" Text="" Foreground="White" FontSize="12"/>
+            <TextBlock x:Name="ToastText" Text="" Foreground="#1A1A1A" FontSize="12"/>
         </Border>
     </Grid>
 </Window>

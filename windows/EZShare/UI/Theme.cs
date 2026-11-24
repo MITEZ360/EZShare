@@ -6,20 +6,20 @@ using System.Windows.Media.Animation;
 
 namespace EZShare.UI
 {
-    /// <summary>固定亮色 teal/blue 品牌色板，与 Android 端一致。</summary>
+    /// <summary>近单色灰阶 + 单一 teal 强调色，与 Android/Mac/Web 一致。</summary>
     public static class Theme
     {
-        public static readonly Color Teal = Color.FromRgb(0x0E, 0x9A, 0x8E);
-        public static readonly Color TealDark = Color.FromRgb(0x0B, 0x7E, 0x74);
-        public static readonly Color Blue = Color.FromRgb(0x2F, 0x6F, 0xED);
-        public static readonly Color Background = Color.FromRgb(0xEE, 0xF1, 0xF5);
+        public static readonly Color Teal = Color.FromRgb(0x00, 0xC2, 0x9A);
+        public static readonly Color TealDark = Color.FromRgb(0x08, 0x78, 0x66);
+        public static readonly Color Blue = Color.FromRgb(0x80, 0x80, 0x80);
+        public static readonly Color Background = Color.FromRgb(0xF7, 0xF7, 0xF7);
         public static readonly Color CardColor = Colors.White;
-        public static readonly Color Ink = Color.FromRgb(0x16, 0x24, 0x2C);
-        public static readonly Color Muted = Color.FromRgb(0x6B, 0x7A, 0x86);
-        public static readonly Color Line = Color.FromRgb(0xE2, 0xE8, 0xEE);
-        public static readonly Color Green = Color.FromRgb(0x10, 0x9A, 0x6A);
-        public static readonly Color Amber = Color.FromRgb(0xD9, 0x8A, 0x10);
-        public static readonly Color Red = Color.FromRgb(0xD1, 0x4B, 0x4B);
+        public static readonly Color Ink = Color.FromRgb(0x1A, 0x1A, 0x1A);
+        public static readonly Color Muted = Color.FromRgb(0x80, 0x80, 0x80);
+        public static readonly Color Line = Color.FromRgb(0xEB, 0xEB, 0xEB);
+        public static readonly Color Green = Color.FromRgb(0x00, 0xC2, 0x9A);
+        public static readonly Color Amber = Color.FromRgb(0xD9, 0x91, 0x1A);
+        public static readonly Color Red = Color.FromRgb(0xC0, 0x39, 0x2B);
 
         public static SolidColorBrush Brush(Color color) { return new SolidColorBrush(color); }
         public static SolidColorBrush TealBrush { get { return Brush(Teal); } }
@@ -112,8 +112,7 @@ namespace EZShare.UI
             {
                 Background = CardBrush,
                 CornerRadius = new CornerRadius(corner),
-                BorderBrush = LineBrush,
-                BorderThickness = new Thickness(1),
+                BorderThickness = new Thickness(0),
                 SnapsToDevicePixels = true
             };
         }

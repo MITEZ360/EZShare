@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -60,19 +60,14 @@ fun BrandMark(
     modifier: Modifier = Modifier,
     size: Int = 28
 ) {
-    val teal = Color(0xFF0EA5A0)
-    val blue = Color(0xFF3B82F6)
+    val teal = Color(0xFF00C29A)
     val white = Color.White
     Canvas(modifier = modifier.size(size.dp)) {
         val w = this.size.width
         val h = this.size.height
-        val r = w * 0.24f
+        val r = w * 0.26f
         drawRoundRect(
-            brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                colors = listOf(teal, blue),
-                start = Offset(0f, 0f),
-                end = Offset(w, h)
-            ),
+            color = teal,
             topLeft = Offset.Zero,
             size = Size(w, h),
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
@@ -126,7 +121,7 @@ fun RefreshIconButton(
         onClick()
     }, modifier = modifier) {
         Icon(
-            Icons.Filled.Refresh,
+            Icons.Outlined.Refresh,
             contentDescription = contentDescription,
             modifier = Modifier.rotate(rotation.value)
         )
@@ -199,10 +194,10 @@ fun EzButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.height(if (compact) 34.dp else 38.dp),
-        shape = RoundedCornerShape(11.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = if (filled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = if (filled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         ),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             horizontal = if (compact) 12.dp else 16.dp,
@@ -226,7 +221,7 @@ fun EzSurface(
 ) {
     val base = modifier
         .fillMaxWidth()
-        .clip(RoundedCornerShape(14.dp))
+        .clip(RoundedCornerShape(16.dp))
         .background(
             if (tonal) MaterialTheme.colorScheme.surfaceContainerLow
             else MaterialTheme.colorScheme.surface
@@ -234,7 +229,7 @@ fun EzSurface(
     if (onClick != null) {
         Card(
             modifier = base.clickable(onClick = onClick),
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = if (tonal) MaterialTheme.colorScheme.surfaceContainerLow
                 else MaterialTheme.colorScheme.surface
@@ -260,7 +255,7 @@ fun SectionTitle(
             text,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Medium
         )
         Spacer(Modifier.weight(1f))
         trailing?.invoke()

@@ -120,7 +120,7 @@ namespace EZShare.UI
 
         private Border SettingCard(string title, string subtitle)
         {
-            var card = Theme.Card(12);
+            var card = Theme.Card(16);
             card.Margin = new Thickness(0, 0, 0, 10);
             card.Padding = new Thickness(14, 12, 14, 12);
             var sp = new StackPanel();

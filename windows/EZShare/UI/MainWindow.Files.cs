@@ -62,7 +62,7 @@ namespace EZShare.UI
             }
 
             // 文件列表卡片
-            var card = Theme.Card(12);
+            var card = Theme.Card(16);
             _fileList = new WrapPanel { Margin = new Thickness(10) };
 
             if (_model.FileEntries.Count == 0)
@@ -95,8 +95,8 @@ namespace EZShare.UI
             if (!_model.IsRunning && !_model.IsJoined)
             {
                 var hint = new Border {
-                    Background = new SolidColorBrush(Color.FromRgb(0xFD, 0xF6, 0xE8)),
-                    CornerRadius = new CornerRadius(9), Padding = new Thickness(12, 9, 12, 9),
+                    Background = new SolidColorBrush(Color.FromRgb(0xF2, 0xF2, 0xF2)),
+                    CornerRadius = new CornerRadius(10), Padding = new Thickness(12, 9, 12, 9),
                     Margin = new Thickness(0, 12, 0, 0)
                 };
                 var hintPanel = new DockPanel();
@@ -106,7 +106,7 @@ namespace EZShare.UI
                 hintPanel.Children.Add(startBtn);
                 hintPanel.Children.Add(new TextBlock {
                     Text = "本机服务未启动，启动后局域网内其他设备可以发现并加入。",
-                    FontSize = 11.5, Foreground = new SolidColorBrush(ColorFromHex(0x8A6D20)), VerticalAlignment = VerticalAlignment.Center
+                    FontSize = 11.5, Foreground = new SolidColorBrush(ColorFromHex(0x808080)), VerticalAlignment = VerticalAlignment.Center
                 });
                 hint.Child = hintPanel;
                 root.Children.Add(hint);
@@ -119,8 +119,8 @@ namespace EZShare.UI
         {
             var tile = new Border {
                 Width = 132, Height = 96, Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(0xF8, 0xFA, 0xFC)),
-                CornerRadius = new CornerRadius(9), Padding = new Thickness(9),
+                Background = new SolidColorBrush(Color.FromRgb(0xF2, 0xF2, 0xF2)),
+                CornerRadius = new CornerRadius(10), Padding = new Thickness(9),
                 Cursor = Cursors.Hand
             };
             var sp = new StackPanel();
@@ -226,12 +226,12 @@ namespace EZShare.UI
         {
             switch (MimeTypes.Category(name))
             {
-                case FileCategory.Image: return Color.FromRgb(0xD1, 0x4B, 0x8A);
-                case FileCategory.Video: return Color.FromRgb(0x7B, 0x4B, 0xD1);
-                case FileCategory.Audio: return Color.FromRgb(0x2F, 0x6F, 0xED);
-                case FileCategory.Archive: return Color.FromRgb(0xD9, 0x8A, 0x10);
-                case FileCategory.Code: return Color.FromRgb(0x0B, 0x7E, 0x74);
-                case FileCategory.Document: return Color.FromRgb(0x2F, 0x6F, 0xED);
+                case FileCategory.Image: return Color.FromRgb(0x80, 0x80, 0x80);
+                case FileCategory.Video: return Color.FromRgb(0x80, 0x80, 0x80);
+                case FileCategory.Audio: return Color.FromRgb(0x80, 0x80, 0x80);
+                case FileCategory.Archive: return Color.FromRgb(0x80, 0x80, 0x80);
+                case FileCategory.Code: return Color.FromRgb(0x80, 0x80, 0x80);
+                case FileCategory.Document: return Color.FromRgb(0x80, 0x80, 0x80);
                 default: return Theme.Teal;
             }
         }

@@ -158,7 +158,7 @@ $footer
         val err = if (error.isNullOrEmpty()) "" else """<p class="err">${esc(error)}</p>"""
         val content = """
 <div class="login-wrap"><div class="login">
-<div class="login-mark">$brandMark</div>
+<div class="mark">$brandMark</div>
 <h1>EZShare</h1><p>$shareName · 输入访问码后继续</p>
 $err
 <form method="post" action="/login">

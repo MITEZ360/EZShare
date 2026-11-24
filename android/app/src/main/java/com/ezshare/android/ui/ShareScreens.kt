@@ -18,12 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -70,22 +70,22 @@ fun FilesScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(15.dp)
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "添加")
+                    Icon(Icons.Outlined.Add, contentDescription = "添加")
                 }
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                     DropdownMenuItem(
                         text = { Text("添加文件") },
-                        leadingIcon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Add, contentDescription = null) },
                         onClick = { menuExpanded = false; onPickFiles() }
                     )
                     DropdownMenuItem(
                         text = { Text("导入文件夹") },
-                        leadingIcon = { Icon(Icons.Filled.Folder, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Folder, contentDescription = null) },
                         onClick = { menuExpanded = false; onPickFolder() }
                     )
                     DropdownMenuItem(
                         text = { Text("新建文件夹") },
-                        leadingIcon = { Icon(Icons.Filled.Folder, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Outlined.Folder, contentDescription = null) },
                         onClick = { menuExpanded = false; folderName = ""; showMkdir = true }
                     )
                 }
@@ -106,7 +106,7 @@ fun FilesScreen(
                 ) {
                     if (state.currentPath.isNotEmpty()) {
                         IconButton(onClick = { com.ezshare.android.server.ShareManager.browse("..") }) {
-                            Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = "返回上一级",
+                            Icon(Icons.Outlined.KeyboardArrowLeft, contentDescription = "返回上一级",
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer)
                         }
                     } else {
@@ -128,7 +128,7 @@ fun FilesScreen(
                 }
             }
             if (state.fileEntries.isEmpty()) {
-                item { EzEmptyState(Icons.Filled.Folder, "这里还是空的", "点击右下角添加文件") }
+                item { EzEmptyState(Icons.Outlined.Folder, "这里还是空的", "点击右下角添加文件") }
             } else {
                 items(state.fileEntries, key = { it.relativePath }) { entry ->
                     val press = remember { MutableInteractionSource() }
@@ -149,7 +149,7 @@ fun FilesScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = if (entry.isDirectory) Icons.Filled.Folder else Icons.Filled.Article,
+                                imageVector = if (entry.isDirectory) Icons.Outlined.Folder else Icons.Outlined.Article,
                                 contentDescription = null,
                                 tint = if (entry.isDirectory) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.secondary,
@@ -170,7 +170,7 @@ fun FilesScreen(
                         }
                         if (state.allowDelete) {
                             IconButton(onClick = { onDelete(entry) }, modifier = Modifier.size(32.dp)) {
-                                Icon(Icons.Filled.Delete, contentDescription = "删除",
+                                Icon(Icons.Outlined.Delete, contentDescription = "删除",
                                     tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(17.dp))
                             }
                         }
@@ -249,7 +249,7 @@ fun TextsScreen(
             SectionTitle(text = "共享文本（${state.snippets.size}）")
         }
         if (state.snippets.isEmpty()) {
-            item { EzEmptyState(Icons.Filled.Article, "还没有共享文本", "在上方输入文字并发送") }
+            item { EzEmptyState(Icons.Outlined.Article, "还没有共享文本", "在上方输入文字并发送") }
         } else {
             items(state.snippets, key = { it.id }) { snippet ->
                 Column(
@@ -270,13 +270,13 @@ fun TextsScreen(
                             modifier = Modifier.weight(1f)
                         )
                         TextButton(onClick = { onCopy(snippet.content) }) {
-                            Icon(Icons.Filled.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Icon(Icons.Outlined.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
                             Spacer(Modifier.width(4.dp))
                             Text("复制", style = MaterialTheme.typography.labelMedium)
                         }
                         if (state.allowDelete) {
                             TextButton(onClick = { onDeleteText(snippet.id) }) {
-                                Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(14.dp))
+                                Icon(Icons.Outlined.Delete, contentDescription = null, modifier = Modifier.size(14.dp))
                                 Spacer(Modifier.width(4.dp))
                                 Text("删除", style = MaterialTheme.typography.labelMedium)
                             }

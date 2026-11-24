@@ -64,10 +64,10 @@ namespace EZShare.UI
 
         private (Color dot, Color bg, Color fg) StatusPalette()
         {
-            if (_model.IsJoined) return (Theme.Blue, Color.FromRgb(0xE7, 0xEF, 0xFD), Theme.Blue);
-            if (_model.IsRunning) return (Theme.Green, Color.FromRgb(0xE8, 0xF5, 0xEF), Theme.Green);
-            if (_model.IsStarting) return (Theme.Amber, Color.FromRgb(0xFD, 0xF3, 0xE2), Theme.Amber);
-            return (Theme.Muted, Color.FromRgb(0xEC, 0xF0, 0xF3), Theme.Muted);
+            if (_model.IsJoined) return (Theme.Blue, Color.FromRgb(0xF2, 0xF2, 0xF2), Theme.Blue);
+            if (_model.IsRunning) return (Theme.Green, Color.FromRgb(0xE6, 0xF8, 0xF3), Theme.Green);
+            if (_model.IsStarting) return (Theme.Amber, Color.FromRgb(0xFB, 0xF3, 0xE0), Theme.Amber);
+            return (Theme.Muted, Color.FromRgb(0xF2, 0xF2, 0xF2), Theme.Muted);
         }
 
         private void RenderPage()

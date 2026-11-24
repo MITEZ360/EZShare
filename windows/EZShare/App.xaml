@@ -7,9 +7,9 @@
         </Style>
 
         <Style x:Key="TabStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="#6B7A86"/>
+            <Setter Property="Foreground" Value="#808080"/>
             <Setter Property="FontSize" Value="12.5"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0,0,0,2"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -28,15 +28,15 @@
         </Style>
 
         <Style x:Key="TabActive" TargetType="Button" BasedOn="{StaticResource TabStyle}">
-            <Setter Property="Foreground" Value="#0E9A8E"/>
-            <Setter Property="BorderBrush" Value="#0E9A8E"/>
+            <Setter Property="Foreground" Value="#00C29A"/>
+            <Setter Property="BorderBrush" Value="#00C29A"/>
         </Style>
 
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Background" Value="#0E9A8E"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Background" Value="#00C29A"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -48,7 +48,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#0B7E74"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#087866"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -57,9 +57,9 @@
         </Style>
 
         <Style x:Key="GhostButton" TargetType="Button">
-            <Setter Property="Foreground" Value="#3C4A54"/>
+            <Setter Property="Foreground" Value="#373737"/>
             <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Background" Value="#F2F5F8"/>
+            <Setter Property="Background" Value="#F2F2F2"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -71,7 +71,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#E6ECF1"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#E6E6E6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -91,7 +91,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#E8EEF3"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#EBEBEB"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

@@ -120,11 +120,10 @@ struct ContentView: View {
     private var header: some View {
         HStack(spacing: 11) {
             BrandMark(size: 34)
-                .shadow(color: Palette.accent.opacity(0.35), radius: 9, x: 0, y: 4)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("EZShare")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .semibold))
                 Text("局域网文件共享 · \(model.shareName)")
                     .font(.system(size: 10.5))
                     .foregroundStyle(.secondary)
