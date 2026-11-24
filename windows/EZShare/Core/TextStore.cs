@@ -42,7 +42,7 @@ namespace EZShare.Core
 
         private static DateTime TryParseDate(string value)
         {
-            return DateTime.TryParse(value, out var dt) ? dt : DateTime.UnixEpoch;
+            return DateTime.TryParse(value, out var dt) ? dt : TimeCompat.UnixEpoch;
         }
 
         private void Persist()

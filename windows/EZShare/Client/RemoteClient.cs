@@ -127,7 +127,7 @@ namespace EZShare.Client
             {
                 foreach (var e in env.entries)
                 {
-                    DateTime modified = DateTime.TryParse(e.modified, out var dt) ? dt : DateTime.UnixEpoch;
+                    DateTime modified = DateTime.TryParse(e.modified, out var dt) ? dt : TimeCompat.UnixEpoch;
                     result.Entries.Add(new ShareEntry {
                         Name = e.name, RelativePath = e.path, IsDirectory = e.isDirectory,
                         Size = e.size, Modified = modified
@@ -145,7 +145,7 @@ namespace EZShare.Client
             foreach (var t in env.items)
                 result.Add(new TextSnippet {
                     Id = t.id, Content = t.content,
-                    CreatedAt = DateTime.TryParse(t.createdAt, out var dt) ? dt : DateTime.UnixEpoch
+                    CreatedAt = DateTime.TryParse(t.createdAt, out var dt) ? dt : TimeCompat.UnixEpoch
                 });
             return result;
         }

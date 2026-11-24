@@ -49,7 +49,7 @@ namespace EZShare.Server
 
         private static string DateText(DateTime dt)
         {
-            if (dt <= DateTime.UnixEpoch.AddSeconds(1)) return "—";
+            if (dt <= TimeCompat.UnixEpoch.AddSeconds(1)) return "—";
             return dt.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
         }
 

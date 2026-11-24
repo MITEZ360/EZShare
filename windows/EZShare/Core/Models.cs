@@ -58,4 +58,10 @@ namespace EZShare.Core
         public int Status { get; set; }
         public long Bytes { get; set; }
     }
+
+    /// <summary>net48 兼容层：DateTime.UnixEpoch 在 .NET Framework 中不存在。</summary>
+    public static class TimeCompat
+    {
+        public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    }
 }
