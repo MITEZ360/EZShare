@@ -1,5 +1,6 @@
 package com.ezshare.android.ui
 
+import com.ezshare.android.R
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
