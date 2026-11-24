@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+
+    <linearGradient id="ez-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F7CFF" />
+      <stop offset="100%" stop-color="#7C5CFF" />
+    </linearGradient>
+
+
+    <linearGradient id="ez-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+
+    <linearGradient id="ez-warm" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FB923C" />
+      <stop offset="100%" stop-color="#F472B6" />
+    </linearGradient>
+
+
+    <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F7CFF" />
+      <stop offset="100%" stop-color="#7C5CFF" />
+    </linearGradient>
+
+
+    <linearGradient id="badge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338CA" />
+      <stop offset="55%" stop-color="#312E81" />
+      <stop offset="100%" stop-color="#1E1B4B" />
+    </linearGradient>
+
+
+    <filter id="blur-base" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" />
+    </filter>
+    <filter id="blur-layer" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" />
+    </filter>
+    <filter id="blur-card" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="18" />
+    </filter>
+    <filter id="blur-badge" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="11" />
+    </filter>
+  </defs>
+
+
+  <path d="M 206 66 L 434 112 Q 458 117 456 142 L 432 434 Q 430 458 406 453 L 184 406 Z" fill="#0F172A" opacity="0.22" filter="url(#blur-base)" />
+  <path d="M 206 58 L 434 104 Q 458 109 456 134 L 432 426 Q 430 450 406 445 L 184 398 Z" fill="url(#ez-cyan)" />
+
+
+  <path d="M 64 224 L 348 164 L 416 444 Q 422 468 398 466 L 108 446 Q 84 444 80 420 L 54 248 Q 50 227 64 224 Z" fill="#0F172A" opacity="0.32" filter="url(#blur-layer)" />
+  <path d="M 62 214 L 346 154 L 414 434 Q 420 458 396 456 L 106 436 Q 82 434 78 410 L 52 238 Q 48 217 62 214 Z" fill="url(#ez-warm)" />
+
+
+  <path d="M 88 78 L 318 58 Q 342 56 334 80 L 256 316 L 72 274 Q 48 268 52 244 L 68 100 Q 70 80 88 78 Z" fill="#0F172A" opacity="0.32" filter="url(#blur-layer)" />
+  <path d="M 86 68 L 316 48 Q 340 46 332 70 L 254 306 L 70 264 Q 46 258 50 234 L 66 90 Q 68 70 86 68 Z" fill="url(#ez-blue)" />
+
+
+  <rect x="116" y="130" width="280" height="280" rx="64" fill="#0F172A" opacity="0.34" filter="url(#blur-card)" />
+
+  
+  <rect x="116" y="116" width="280" height="280" rx="64" fill="#FFFFFF" />
+
+
+  <g transform="translate(-8, -8)">
+    <g stroke="url(#icon-grad)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <line x1="204" y1="256" x2="308" y2="196" />
+      <line x1="204" y1="256" x2="308" y2="316" />
+    </g>
+    <g fill="url(#icon-grad)">
+      <circle cx="204" cy="256" r="26" />
+      <circle cx="308" cy="196" r="22" />
+      <circle cx="308" cy="316" r="22" />
+    </g>
+  </g>
+
+
+  <g transform="translate(310, 319)">
+    <path d="M 58 0
+             C 98 0, 116 18, 116 58
+             C 116 98, 98 116, 58 116
+             C 18 116, 0 98, 0 58
+             C 0 18, 18 0, 58 0 Z" fill="#0F172A" opacity="0.44" filter="url(#blur-badge)" />
+  </g>
+
+
+  <g transform="translate(310, 310)">
+    <path d="M 58 0
+             C 98 0, 116 18, 116 58
+             C 116 98, 98 116, 58 116
+             C 18 116, 0 98, 0 58
+             C 0 18, 18 0, 58 0 Z" fill="url(#badge-grad)" />
+
+
+    <g fill="#FFFFFF">
+      <path d="M 34 31
+               H 83
+               Q 86 31 84.5 34
+               L 81.5 39.5
+               Q 78.5 44 72 44
+               H 34
+               Q 30 44 30 40
+               V 35
+               Q 30 31 34 31 Z" />
+      <path d="M 34 51.5
+               H 73
+               Q 76 51.5 74.5 54.5
+               L 71.5 60
+               Q 68.5 64.5 62 64.5
+               H 34
+               Q 30 64.5 30 60.5
+               V 55.5
+               Q 30 51.5 34 51.5 Z" />
+      <path d="M 34 72
+               H 83
+               Q 86 72 84.5 75
+               L 81.5 80.5
+               Q 78.5 85 72 85
+               H 34
+               Q 30 85 30 81
+               V 76
+               Q 30 72 34 72 Z" />
+    </g>
+  </g>
+</svg>

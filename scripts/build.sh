@@ -90,22 +90,13 @@ mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$BUILD_DIR/$APP_NAME" "$APP_DIR/Contents/MacOS/$APP_NAME"
 cp "$PROJECT_ROOT/packaging/Info.plist" "$APP_DIR/Contents/Info.plist"
 
-# 图标（生成一次后缓存）
+# 图标（从 branding 矢量源渲染的 PNG 生成，缓存一次）
 if [ ! -f "$BUILD_DIR/Resources/AppIcon.icns" ]; then
-  ICON_TOOL="$BUILD_DIR/make-icon"
-  if "$SWIFTC" -O -swift-version 5 -target "$(uname -m)-apple-macos13.0" -sdk "$SDK" \
-       "${OVERLAY_ARGS[@]+"${OVERLAY_ARGS[@]}"}" \
-       "$PROJECT_ROOT/tools/make-icon.swift" -o "$ICON_TOOL" 2>/dev/null \
-     && "$ICON_TOOL" "$BUILD_DIR/AppIcon.png" >/dev/null; then
+  ICON_SRC="$PROJECT_ROOT/branding/export/EZShare-final.png"
+  if [ -f "$ICON_SRC" ]; then
     ICONSET="$BUILD_DIR/AppIcon.iconset"
-    mkdir -p "$ICONSET"
-    for spec in "16 16" "32 16" "32 32" "64 32" "128 128" "256 128" "256 256" "512 256" "512 512" "1024 512"; do
-      set -- $spec
-      cp "$BUILD_DIR/AppIcon.png" "$ICONSET/icon_${1}x${2}@2x.png" 2>/dev/null || true
-    done
-    # 重新生成标准 iconset 命名
     rm -rf "$ICONSET"; mkdir -p "$ICONSET"
-    python3 - "$BUILD_DIR/AppIcon.png" "$ICONSET" <<'PY'
+    python3 - "$ICON_SRC" "$ICONSET" <<'PY'
 import subprocess, sys
 src, dst = sys.argv[1], sys.argv[2]
 sizes = [16, 32, 64, 128, 256, 512, 1024]
@@ -120,7 +111,7 @@ PY
     mkdir -p "$BUILD_DIR/Resources"
     iconutil -c icns "$ICONSET" -o "$BUILD_DIR/Resources/AppIcon.icns"
   else
-    echo "[EZShare] 跳过图标生成（可选步骤失败）"
+    echo "[EZShare] 跳过图标生成：缺少 branding/export/EZShare-final.png"
   fi
 fi
 [ -f "$BUILD_DIR/Resources/AppIcon.icns" ] && cp "$BUILD_DIR/Resources/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
