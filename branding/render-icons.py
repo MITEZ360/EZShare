@@ -218,6 +218,19 @@ def make_ico(rgba, width, height, tmpdir, out, sizes=(16, 24, 32, 48, 64, 128, 2
         f.write(header + directory + payload)
 
 
+def pad_center(rgba, src_w, src_h, target, ratio):
+    """把整幅图按 ratio 缩放后居中贴到 target×target 透明画布（自适应图标前景用）。"""
+    inner = max(1, int(round(target * ratio)))
+    small = downscale(rgba, src_w, src_h, inner)
+    out = bytearray(target * target * 4)
+    off = (target - inner) // 2
+    stride = inner * 4
+    for y in range(inner):
+        dst = ((y + off) * target + off) * 4
+        out[dst:dst + stride] = small[y * stride:(y + 1) * stride]
+    return out
+
+
 # --------------------------------------------------------------------------
 def main():
     with open(SVG_PATH) as f:
@@ -278,6 +291,16 @@ def main():
             os.makedirs(folder, exist_ok=True)
             resize(master, os.path.join(folder, "ic_launcher.png"), px)
         print("[icons] android mipmap-*/ic_launcher.png")
+
+        # Android 自适应图标前景：108dp 画布，内容压到 80% 居中（落在安全区内）
+        # 用位图而不是矢量：矢量做不了 SVG 里的高斯模糊投影，颜色也得靠近似，会与原图不一致
+        for dpi, canvas in {"mdpi": 108, "hdpi": 162, "xhdpi": 216,
+                            "xxhdpi": 324, "xxxhdpi": 432}.items():
+            folder = os.path.join(ANDROID_RES, f"drawable-{dpi}")
+            os.makedirs(folder, exist_ok=True)
+            fg = pad_center(rgba, w1, h1, canvas, 0.80)
+            write_png(os.path.join(folder, "ic_launcher_foreground.png"), canvas, canvas, fg)
+        print("[icons] android drawable-*/ic_launcher_foreground.png")
 
 
 if __name__ == "__main__":

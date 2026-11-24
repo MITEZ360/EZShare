@@ -57,11 +57,11 @@ SVG 源文件**不带背景**。各平台按「该处能否透出桌面」决定
 python3 branding/render-icons.py
 ```
 
-脚本会自动：渲染 SVG（双背景反解 alpha，绕过 `sips` 把透明压成白色的问题）→ 生成 PNG/ICNS/ICO
+脚本会自动：渲染 SVG（双背景反解 alpha，绕过 `sips` 把透明压成白色的问题）→ 生成 PNG/ICNS/ICO/Android 前景位图
 → 分发到 `android/app/src/main/assets/brand.png`、`windows/EZShare/Assets/`、`android/.../mipmap-*`。
 
 ## 应用到项目
 
 - macOS：`scripts/build.sh` 复制 `export/AppIcon.icns` 与 `BrandMark.png`、`brand-web.png` 进 App Resources
-- Android：`res/mipmap-anydpi-v26/ic_launcher.xml`（白底）+ `res/drawable/ic_launcher_foreground.xml`（透明前景）
+- Android：`res/mipmap-anydpi-v26/ic_launcher.xml`（白底）+ `res/drawable-*/ic_launcher_foreground.png`（透明前景，由 SVG 渲染的位图，保证与 SVG 完全同色）
 - Windows：`EZShare.csproj` 的 `ApplicationIcon` 与 `EmbeddedResource`（AppIcon.ico / brand.png / BrandMark.png）

@@ -15,7 +15,10 @@ enum Launcher {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     static weak var shared: AppDelegate?
     private var statusItem: NSStatusItem?
+    private var menu: NSMenu?
     weak var model: AppModel?
+    /// 主窗口引用：SwiftUI 会另建状态栏/菜单等窗口，靠 NSApp.windows.first 拿不准
+    weak var mainWindow: NSWindow?
 
     override init() {
         super.init()
@@ -33,6 +36,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenuBar()
     }
 
+    /// 由界面里的 WindowAccessor 回调，锁定真正的主窗口
+    func attach(window: NSWindow) {
+        guard mainWindow !== window else { return }
+        mainWindow = window
+        window.isReleasedWhenClosed = false
+        window.delegate = self
+    }
+
     private func setupMenuBar() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = item.button {
@@ -44,30 +55,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 button.title = "EZ"
             }
             button.toolTip = "EZShare"
-            button.action = #selector(statusItemClicked(_:))
-            button.target = self
         }
         let menu = NSMenu()
-        menu.addItem(withTitle: "显示 / 隐藏 EZShare", action: #selector(toggleMainWindow(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "显示 EZShare", action: #selector(toggleMainWindow(_:)), keyEquivalent: "")
         menu.addItem(withTitle: "启动 / 停止共享", action: #selector(toggleShare(_:)), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "退出 EZShare", action: #selector(quitApp(_:)), keyEquivalent: "q")
+        menu.delegate = self
         item.menu = menu
+        self.menu = menu
         statusItem = item
     }
 
-    @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
-        toggleMainWindow(sender)
-    }
-
     @objc private func toggleMainWindow(_ sender: Any?) {
-        if let window = NSApp.windows.first(where: { $0.isVisible }) {
+        guard let window = mainWindow ?? NSApp.windows.first(where: { $0.canBecomeMain }) else {
+            // 窗口还没建好（启动瞬间点菜单），稍后再试
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.toggleMainWindow(nil)
+            }
+            return
+        }
+        if window.isVisible {
             window.orderOut(nil)
             NSApp.setActivationPolicy(.accessory)
         } else {
             NSApp.setActivationPolicy(.regular)
-            NSApp.windows.first?.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
         }
     }
 
@@ -80,6 +94,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+extension AppDelegate: NSWindowDelegate {
+    /// 点红叉 / Cmd+W 只隐藏窗口，不销毁，保证托盘能再叫出来
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        sender.orderOut(nil)
+        NSApp.setActivationPolicy(.accessory)
+        return false
+    }
+}
+
+extension AppDelegate: NSMenuDelegate {
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.items.first?.title = (mainWindow?.isVisible ?? false) ? "隐藏 EZShare" : "显示 EZShare"
+    }
+}
+
+/// 把 SwiftUI 的主窗口交给 AppDelegate，用于托盘的显示 / 隐藏
+struct WindowAccessor: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView(frame: .zero)
+        DispatchQueue.main.async {
+            if let window = view.window {
+                AppDelegate.shared?.attach(window: window)
+            }
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {}
+}
+
 struct EZShareApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @StateObject private var model = AppModel()
@@ -88,6 +132,7 @@ struct EZShareApp: App {
         WindowGroup("EZShare") {
             ContentView()
                 .environmentObject(model)
+                .background(WindowAccessor())
                 .onAppear { AppDelegate.shared?.model = model }
         }
         .windowStyle(.hiddenTitleBar)
