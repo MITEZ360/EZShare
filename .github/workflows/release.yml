@@ -71,21 +71,27 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Publish Windows EXE
+      - name: Publish Windows EXE (two variants)
         working-directory: windows
         shell: pwsh
         run: |
-          dotnet publish EZShare/EZShare.csproj -c Release -r win-x64 --self-contained true `
+          dotnet publish EZShare/EZShare.csproj -c Release -f net8.0-windows -r win-x64 --self-contained true `
             -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true -o out/win-x64
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Compress-Archive -Path out/win-x64/EZShare.exe -DestinationPath EZShare-Windows.zip -Force
 
-      - name: Upload Windows artifact
+          dotnet publish EZShare/EZShare.csproj -c Release -f net48 --self-contained false -o out/win-x64-net48
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Compress-Archive -Path out/win-x64-net48/* -DestinationPath EZShare-Windows-net48.zip -Force
+
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: EZShare-Windows
-          path: windows/EZShare-Windows.zip
+          path: |
+            windows/EZShare-Windows.zip
+            windows/EZShare-Windows-net48.zip
           if-no-files-found: error
           retention-days: 30
 
@@ -108,12 +114,15 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           ANDROID_APK="artifacts/EZShare-Android/app-debug.apk"
           WINDOWS_ZIP="artifacts/EZShare-Windows/EZShare-Windows.zip"
+          WINDOWS_NET48_ZIP="artifacts/EZShare-Windows/EZShare-Windows-net48.zip"
           MAC_ZIP="dist/EZShare-${VERSION}-macOS-universal.zip"
           test -s "$ANDROID_APK"
           test -s "$WINDOWS_ZIP"
+          test -s "$WINDOWS_NET48_ZIP"
           test -s "$MAC_ZIP"
           cp "$ANDROID_APK" "EZShare-${VERSION}-android.apk"
           cp "$WINDOWS_ZIP" "EZShare-${VERSION}-windows-x64.zip"
+          cp "$WINDOWS_NET48_ZIP" "EZShare-${VERSION}-windows-x64-net48.zip"
           printf '%s\n' \
             "EZShare ${VERSION} - macOS, Windows and Android" \
             "" \
@@ -121,7 +130,11 @@ jobs:
             "" \
             "macOS: download EZShare-${VERSION}-macOS-universal.zip, unzip and move EZShare.app to Applications. Universal binary (Intel + Apple Silicon). If macOS blocks first launch, right-click and choose Open." \
             "" \
-            "Windows: download EZShare-${VERSION}-windows-x64.zip, extract EZShare.exe and run. Self-contained, no .NET runtime required. Windows Defender may warn on first run for unsigned apps." \
+            "Windows - full (EZShare-${VERSION}-windows-x64.zip): single EZShare.exe, self-contained .NET 8 runtime, ~66MB, no prerequisites. Choose this if unsure." \
+            "" \
+            "Windows - lite (EZShare-${VERSION}-windows-x64-net48.zip): ~4MB, needs .NET Framework 4.8 (preinstalled on Windows 10/11). Extract the folder and run EZShare.exe." \
+            "" \
+            "Both Windows builds have identical features and UI. Windows Defender may warn on first run for unsigned apps." \
             "" \
             "Android: install EZShare-${VERSION}-android.apk (allow unknown sources). Grant a shared folder on first launch; a persistent notification keeps sharing alive." \
             "" \
@@ -133,4 +146,5 @@ jobs:
             --notes-file /tmp/ez-release-notes.md \
             "EZShare-${VERSION}-android.apk" \
             "EZShare-${VERSION}-windows-x64.zip" \
+            "EZShare-${VERSION}-windows-x64-net48.zip" \
             "$MAC_ZIP"

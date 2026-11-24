@@ -27,26 +27,36 @@ jobs:
         working-directory: windows
         run: dotnet build EZShare.sln -c Release --no-restore
 
-      - name: Publish (self-contained, framework-dependent fallback)
+      - name: Publish (self-contained single file)
         working-directory: windows
         shell: pwsh
         run: |
-          dotnet publish EZShare/EZShare.csproj -c Release -r win-x64 --self-contained true `
+          dotnet publish EZShare/EZShare.csproj -c Release -f net8.0-windows -r win-x64 --self-contained true `
             -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true -o out/win-x64
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Publish (.NET Framework 4.8, system runtime)
+        working-directory: windows
+        shell: pwsh
+        run: |
+          dotnet publish EZShare/EZShare.csproj -c Release -f net48 --self-contained false -o out/win-x64-net48
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Package
         working-directory: windows
         shell: pwsh
         run: |
-          $version = "0.0.6"
+          $version = "0.0.7"
           Compress-Archive -Path out/win-x64/EZShare.exe -DestinationPath "EZShare-$version-windows-x64.zip" -Force
+          Compress-Archive -Path out/win-x64-net48/* -DestinationPath "EZShare-$version-windows-x64-net48.zip" -Force
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: EZShare-Windows
-          path: windows/EZShare-0.0.6-windows-x64.zip
+          path: |
+            windows/EZShare-0.0.7-windows-x64.zip
+            windows/EZShare-0.0.7-windows-x64-net48.zip
           if-no-files-found: error
           retention-days: 30
