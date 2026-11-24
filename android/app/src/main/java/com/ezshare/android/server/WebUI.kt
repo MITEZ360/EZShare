@@ -31,12 +31,16 @@ $content
 </html>
 """
 
-    private fun topbar(shareName: String, active: String, baseUrl: String): String = """
+    private fun topbar(shareName: String, active: String, baseUrl: String): String {
+        // 共享名与产品名相同时不再重复显示，避免出现两个 "EZShare"
+        val sub = if (shareName.isEmpty() || shareName == "EZShare") ""
+        else """<span class="sub">${esc(shareName)}</span>"""
+        return """
 <header class="topbar"><div class="topbar-inner">
 <div class="brand">
 <span class="mark">$brandMark</span>
 <span class="title">EZShare</span>
-<span class="sub">${esc(shareName)}</span>
+$sub
 </div>
 <nav class="tabs">
 <a class="${if (active == "files") "tab active" else "tab"}" href="/">文件</a>
@@ -47,6 +51,7 @@ $content
 <span class="chip"><span class="dot"></span>局域网共享中</span>
 </div></header>
 """
+    }
 
     private val footer = """<footer><span>EZShare</span><span class="dot"></span><span>仅同一局域网内可访问</span><span class="dot"></span><span>本地直连 · 不经云端</span></footer>"""
 

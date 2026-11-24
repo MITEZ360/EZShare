@@ -95,12 +95,16 @@ enum WebUI {
     private static func topbar(shareName: String, active: String) -> String {
         let filesTab = active == "files" ? "tab active" : "tab"
         let textTab = active == "text" ? "tab active" : "tab"
+        // 共享名与产品名相同时不再重复显示，避免出现两个 "EZShare"
+        let sub = (shareName.isEmpty || shareName == "EZShare")
+            ? ""
+            : "<span class=\"sub\">\(esc(shareName))</span>"
         return """
         <header class="topbar"><div class="topbar-inner">
         <div class="brand">
         <span class="mark">\(brandMark)</span>
         <span class="title">EZShare</span>
-        <span class="sub">\(esc(shareName))</span>
+        \(sub)
         </div>
         <nav class="tabs">
         <a class="\(filesTab)" href="/">文件</a>

@@ -34,13 +34,13 @@ SVG 源文件**不带背景**。各平台按「该处能否透出桌面」决定
 
 | 场景 | 处理 | 原因 |
 |---|---|---|
-| macOS `AppIcon.icns` | 透明 | Dock/Finder 支持 alpha，透明才不会出现灰白方块 |
+| macOS `AppIcon.icns` | **白色**满画布 | 用户指定：Dock 里白底更整、不显空洞 |
 | Windows `AppIcon.ico`（exe/任务栏/托盘） | 透明（32bpp alpha） | 窗口图标与任务栏支持 alpha |
 | 程序内品牌标 `BrandMark.png` | 透明 | 落在应用自己的背景上 |
 | 网页头部 logo / 浏览器标签页图标 `/brand.png` | 透明 | 页面深浅色自适应 |
 | Android 自适应图标**背景层** | 白色 `#FFFFFF` | 自适应图标背景必须不透明，系统会裁切成各种形状 |
 
-也就是说：**只有 Android 自适应图标的背景层用白色，其余全部透明。**
+也就是说：**macOS 图标与 Android 自适应图标背景层用白色，其余全部透明。**
 
 ## 资产文件
 

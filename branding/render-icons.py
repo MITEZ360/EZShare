@@ -131,10 +131,17 @@ def resize(src, dst, size):
 
 
 def make_icns(png_1024, tmpdir, out):
+    """生成 ICNS：只放 ≥128px 的 PNG 块。
+
+    不走 16/32/48：iconutil 会把这几个尺寸写成索引色块（is32/il32），
+    量化后小图会偏色（实测 32px 底边出现黄条）。缺的小尺寸由系统从 128 缩放，
+    视觉上没有问题，也比索引色量化更准。
+    也不手写 icns：icp4/icp5 这类 PNG 小尺寸块 IconServices 解析不正确。
+    """
     iconset = os.path.join(tmpdir, "AppIcon.iconset")
     shutil.rmtree(iconset, ignore_errors=True)
     os.makedirs(iconset)
-    for size in (16, 32, 128, 256, 512):
+    for size in (128, 256, 512):
         resize(png_1024, os.path.join(iconset, f"icon_{size}x{size}.png"), size)
         resize(png_1024, os.path.join(iconset, f"icon_{size}x{size}@2x.png"), size * 2)
     subprocess.run(["iconutil", "-c", "icns", iconset, "-o", out], check=True)
@@ -235,8 +242,11 @@ def main():
         resize(master, os.path.join(EXPORT, "EZShare-final-180.png"), 180)
         resize(master, os.path.join(EXPORT, "BrandMark.png"), 256)
 
-        make_icns(master, tmpdir, os.path.join(EXPORT, "AppIcon.icns"))
-        print("[icons] AppIcon.icns")
+        # macOS：Dock 里带白色背景更好看（用户指定），因此 icns 用白底版本
+        white_png = os.path.join(tmpdir, "master-white.png")
+        write_png(white_png, w1, h1, white)
+        make_icns(white_png, tmpdir, os.path.join(EXPORT, "AppIcon.icns"))
+        print("[icons] AppIcon.icns（白底）")
 
         make_ico(rgba, w1, h1, tmpdir, os.path.join(EXPORT, "AppIcon.ico"))
         print("[icons] AppIcon.ico")

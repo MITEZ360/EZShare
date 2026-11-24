@@ -89,9 +89,13 @@ namespace EZShare.Server
         {
             string filesTab = active == "files" ? "tab active" : "tab";
             string textTab = active == "text" ? "tab active" : "tab";
+            // 共享名与产品名相同时不再重复显示，避免出现两个 "EZShare"
+            string sub = string.IsNullOrEmpty(shareName) || shareName == "EZShare"
+                ? ""
+                : "<span class=\"sub\">" + Esc(shareName) + "</span>";
             return "<header class=\"topbar\"><div class=\"topbar-inner\">" +
                 "<div class=\"brand\"><span class=\"mark\">" + BrandMark + "</span>" +
-                "<span class=\"title\">EZShare</span><span class=\"sub\">" + Esc(shareName) + "</span></div>" +
+                "<span class=\"title\">EZShare</span>" + sub + "</div>" +
                 "<nav class=\"tabs\"><a class=\"" + filesTab + "\" href=\"/\">文件</a><a class=\"" + textTab + "\" href=\"/text\">文本</a></nav>" +
                 "<span class=\"spacer\"></span><span class=\"chip\"><span class=\"dot\"></span>局域网共享中</span>" +
                 "</div></header>";
