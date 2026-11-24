@@ -19,49 +19,33 @@ enum Palette {
     }
 }
 
-/// 品牌图形：与网页端 brandMark 完全一致的「托盘 + 上箭头」白色线条，
-/// 绘制在 24×24 视口坐标系中。
-struct BrandMarkShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-            CGPoint(x: x * rect.width / 24, y: y * rect.height / 24)
-        }
-        // 箭杆
-        p.move(to: pt(12, 15.5))
-        p.addLine(to: pt(12, 4))
-        // 箭头
-        p.move(to: pt(7.8, 8.2))
-        p.addLine(to: pt(12, 4))
-        p.addLine(to: pt(16.2, 8.2))
-        // 托盘
-        p.move(to: pt(4.6, 14))
-        p.addLine(to: pt(4.6, 18.2))
-        p.addCurve(to: pt(6.5, 20.1), control1: pt(4.6, 19.25), control2: pt(5.55, 20.1))
-        p.addLine(to: pt(17.5, 20.1))
-        p.addCurve(to: pt(19.4, 18.2), control1: pt(18.45, 20.1), control2: pt(19.4, 19.25))
-        p.addLine(to: pt(19.4, 14))
-        return p
-    }
-}
-
-/// 品牌图标：渐变圆角底 + 网页端同款白色线条图形。
+/// 品牌图标：使用与三端一致的 EZShare 新 logo（branding/export/EZShare-final.png）。
+/// 资源未打包时回退到简化图形，避免 UI 出现空洞。
 struct BrandMark: View {
     var size: CGFloat = 34
 
+    private var logoImage: NSImage? {
+        guard let url = Bundle.main.url(forResource: "BrandMark", withExtension: "png") else { return nil }
+        return NSImage(contentsOf: url)
+    }
+
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
-            .fill(Palette.accent)
-            .frame(width: size, height: size)
-            .overlay(
-                BrandMarkShape()
-                    .stroke(
-                        Color.white,
-                        style: StrokeStyle(lineWidth: size * 0.044, lineCap: .round, lineJoin: .round)
+        Group {
+            if let image = logoImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } else {
+                RoundedRectangle(cornerRadius: size * 0.26, style: .continuous)
+                    .fill(Palette.accent)
+                    .overlay(
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundColor(.white)
+                            .font(.system(size: size * 0.5, weight: .semibold))
                     )
-                    .frame(width: size * 0.792, height: size * 0.792)
-                    .aspectRatio(1, contentMode: .fit)
-            )
+            }
+        }
+        .frame(width: size, height: size)
     }
 }
 

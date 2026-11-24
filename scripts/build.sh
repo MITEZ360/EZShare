@@ -115,6 +115,7 @@ PY
   fi
 fi
 [ -f "$BUILD_DIR/Resources/AppIcon.icns" ] && cp "$BUILD_DIR/Resources/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
+cp "$PROJECT_ROOT/android/app/src/main/res/drawable-nodpi/brand_mark.png" "$APP_DIR/Contents/Resources/BrandMark.png"
 
 # ---------------------------------------------------------------------------
 # 签名（ad-hoc，保证本机可直接运行并触发本地网络权限）

@@ -13,13 +13,70 @@ enum Launcher {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    static weak var shared: AppDelegate?
+    private var statusItem: NSStatusItem?
+    weak var model: AppModel?
+
+    override init() {
+        super.init()
+        AppDelegate.shared = self
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        true
+        // 关闭窗口只隐藏，不退出；服务继续在后台运行。
+        false
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+        setupMenuBar()
+    }
+
+    private func setupMenuBar() {
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        if let button = item.button {
+            if let url = Bundle.main.url(forResource: "BrandMark", withExtension: "png"),
+               let image = NSImage(contentsOf: url) {
+                image.size = NSSize(width: 18, height: 18)
+                button.image = image
+            } else {
+                button.title = "EZ"
+            }
+            button.toolTip = "EZShare"
+            button.action = #selector(statusItemClicked(_:))
+            button.target = self
+        }
+        let menu = NSMenu()
+        menu.addItem(withTitle: "显示 / 隐藏 EZShare", action: #selector(toggleMainWindow(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "启动 / 停止共享", action: #selector(toggleShare(_:)), keyEquivalent: "")
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(withTitle: "退出 EZShare", action: #selector(quitApp(_:)), keyEquivalent: "q")
+        item.menu = menu
+        statusItem = item
+    }
+
+    @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
+        toggleMainWindow(sender)
+    }
+
+    @objc private func toggleMainWindow(_ sender: Any?) {
+        if let window = NSApp.windows.first(where: { $0.isVisible }) {
+            window.orderOut(nil)
+            NSApp.setActivationPolicy(.accessory)
+        } else {
+            NSApp.setActivationPolicy(.regular)
+            NSApp.windows.first?.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+
+    @objc private func toggleShare(_ sender: Any?) {
+        model?.toggle()
+    }
+
+    @objc private func quitApp(_ sender: Any?) {
+        NSApp.terminate(nil)
     }
 }
 
@@ -31,6 +88,7 @@ struct EZShareApp: App {
         WindowGroup("EZShare") {
             ContentView()
                 .environmentObject(model)
+                .onAppear { AppDelegate.shared?.model = model }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentMinSize)

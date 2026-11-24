@@ -5,6 +5,11 @@
     android:viewportWidth="512"
     android:viewportHeight="512">
 
+    <!-- 白色不透明铺底：消除四角透明 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0 H512 V512 H0 Z" />
+
     <!-- 蓝紫卡投影 -->
     <path
         android:fillColor="#0F172A"

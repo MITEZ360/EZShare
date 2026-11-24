@@ -55,49 +55,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
+/// 品牌图标：使用与三端一致的 EZShare 新 logo（res/drawable-nodpi/brand_mark.png）。
 @Composable
 fun BrandMark(
     modifier: Modifier = Modifier,
     size: Int = 28
 ) {
-    val teal = Color(0xFF00C29A)
-    val white = Color.White
-    Canvas(modifier = modifier.size(size.dp)) {
-        val w = this.size.width
-        val h = this.size.height
-        val r = w * 0.26f
-        drawRoundRect(
-            color = teal,
-            topLeft = Offset.Zero,
-            size = Size(w, h),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r)
-        )
-        val trayW = w * 0.50f
-        val trayH = h * 0.09f
-        val trayX = (w - trayW) / 2f
-        val trayY = h * 0.66f
-        drawRoundRect(
-            color = white,
-            topLeft = Offset(trayX, trayY),
-            size = Size(trayW, trayH),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(trayH / 2f, trayH / 2f)
-        )
-        val arrow = Path().apply {
-            val cx = w / 2f
-            val top = h * 0.24f
-            val bottom = h * 0.61f
-            val half = w * 0.17f
-            moveTo(cx, top)
-            lineTo(cx + half, top + half)
-            lineTo(cx + half * 0.42f, top + half)
-            lineTo(cx + half * 0.42f, bottom)
-            lineTo(cx - half * 0.42f, bottom)
-            lineTo(cx - half * 0.42f, top + half)
-            lineTo(cx - half, top + half)
-            close()
-        }
-        drawPath(arrow, white)
-    }
+    androidx.compose.foundation.Image(
+        painter = androidx.compose.ui.res.painterResource(R.drawable.brand_mark),
+        contentDescription = "EZShare",
+        modifier = modifier.size(size.dp)
+    )
 }
 
 /// 刷新按钮：点击时图标平滑旋转一圈，给出明确的"正在刷新"反馈。

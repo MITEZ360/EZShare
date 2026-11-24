@@ -22,11 +22,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="34" Height="34" CornerRadius="10" Background="#00C29A" Margin="0,0,10,0">
-                        <TextBlock Text="⇧" FontSize="22" Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   FontWeight="SemiBold"/>
-                    </Border>
+                    <Image Width="34" Height="34" Margin="0,0,10,0"
+                           Source="/Assets/BrandMark.png" Stretch="Uniform"/>
                     <StackPanel>
                         <TextBlock Text="EZShare" FontSize="15" FontWeight="SemiBold" Foreground="#1A1A1A"/>
                         <TextBlock x:Name="ShareNameText" Text="EZShare" FontSize="11" Foreground="#808080"/>

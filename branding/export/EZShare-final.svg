@@ -46,6 +46,8 @@
     </filter>
   </defs>
 
+  <!-- 铺满画布的白色不透明底：消除四角透明，macOS/Windows 不再显示系统灰色容器 -->
+  <rect x="0" y="0" width="512" height="512" fill="#FFFFFF" />
 
   <path d="M 206 66 L 434 112 Q 458 117 456 142 L 432 434 Q 430 458 406 453 L 184 406 Z" fill="#0F172A" opacity="0.22" filter="url(#blur-base)" />
   <path d="M 206 58 L 434 104 Q 458 109 456 134 L 432 426 Q 430 450 406 445 L 184 398 Z" fill="url(#ez-cyan)" />
