@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48dp"
-    android:height="48dp"
+    android:width="108dp"
+    android:height="108dp"
     android:viewportWidth="512"
     android:viewportHeight="512">
 
-    <!-- 白色不透明铺底：消除四角透明 -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M0,0 H512 V512 H0 Z" />
+    <!-- 自适应图标前景：内容缩到 108dp 安全区（约 66%）内，四周留透明 -->
+    <group
+        android:pivotX="256"
+        android:pivotY="256"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
 
     <!-- 蓝紫卡投影 -->
     <path
@@ -75,4 +77,5 @@
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M344,341 H393 Q396,341 394.5,344 L391.5,349.5 Q388.5,354 382,354 H344 Q340,354 340,350 V345 Q340,341 344,341 Z M344,361.5 H383 Q386,361.5 384.5,364.5 L381.5,370 Q378.5,374.5 372,374.5 H344 Q340,374.5 340,370.5 V365.5 Q340,361.5 344,361.5 Z M344,382 H393 Q396,382 394.5,385 L391.5,390.5 Q388.5,395 382,395 H344 Q340,395 340,391 V386 Q340,382 344,382 Z" />
+    </group>
 </vector>

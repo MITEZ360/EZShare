@@ -70,7 +70,16 @@ class Router(
         return html(web.login(null, root.displayName), 401)
     }
 
+    /// 品牌标 / 浏览器标签页图标：透明 PNG，与桌面图标同一份图形；登录页也要能取到，故不做鉴权
+    private val brandPng: ByteArray by lazy {
+        context.assets.open("brand.png").use { it.readBytes() }
+    }
+
     fun handle(req: Req, input: InputStream): Res {
+        if (req.path == "/brand.png" || req.path == "/favicon.ico") {
+            return Res(200, "image/png", brandPng, headers = mapOf("Cache-Control" to "public, max-age=86400"))
+        }
+
         unauthorized(req)?.let { return it }
 
         return when {

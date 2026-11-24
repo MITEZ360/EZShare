@@ -8,7 +8,8 @@ namespace EZShare.Server
 {
     public static class WebUI
     {
-        public const string BrandMark = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 15.5V4\"/><path d=\"M7.8 8.2L12 4l4.2 4.2\"/><path d=\"M4.6 14v4.2a1.9 1.9 0 0 0 1.9 1.9h11a1.9 1.9 0 0 0 1.9-1.9V14\"/></svg>";
+        /// 品牌标直接用透明 PNG（/brand.png），与桌面图标同一份图形
+        public const string BrandMark = "<img src=\"/brand.png\" alt=\"\" width=\"34\" height=\"34\">";
 
         private const string FolderIcon = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 7.5A2 2 0 0 1 5 5.5h3.6c.5 0 1 .2 1.4.6l1 1c.4.4.9.6 1.4.6H19a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg>";
         private const string ImageIcon = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2.6\"/><circle cx=\"8.8\" cy=\"9.8\" r=\"1.5\"/><path d=\"M4.6 17.2l4.1-4.1a1.6 1.6 0 0 1 2.3 0l2.8 2.8\"/><path d=\"M14.4 15.2l1.7-1.7a1.6 1.6 0 0 1 2.3 0l1.1 1.1\"/></svg>";
@@ -75,6 +76,8 @@ namespace EZShare.Server
                 "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n" +
                 "<meta name=\"color-scheme\" content=\"light dark\">\n" +
                 "<title>" + Esc(title) + "</title>\n" +
+                "<link rel=\"icon\" type=\"image/png\" href=\"/brand.png\">\n" +
+                "<link rel=\"apple-touch-icon\" href=\"/brand.png\">\n" +
                 "<style>" + WebAssets.Css + "</style>\n" +
                 "</head>\n<body " + bodyAttributes + ">\n" + content + "\n" +
                 "<div id=\"drop\"><div class=\"zone\"><h2>松开以上传</h2><p>文件会保存到当前目录</p></div></div>\n" +

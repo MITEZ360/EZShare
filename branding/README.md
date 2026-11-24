@@ -28,24 +28,40 @@
 | 徽章深蓝 | `#4338CA` → `#312E81` → `#1E1B4B` |
 | 投影 | `#0F172A` opacity 0.22–0.44 + Gaussian blur |
 
+## 透明策略（重要）
+
+SVG 源文件**不带背景**。各平台按「该处能否透出桌面」决定是否铺白，不要一律用同一套：
+
+| 场景 | 处理 | 原因 |
+|---|---|---|
+| macOS `AppIcon.icns` | 透明 | Dock/Finder 支持 alpha，透明才不会出现灰白方块 |
+| Windows `AppIcon.ico`（exe/任务栏/托盘） | 透明（32bpp alpha） | 窗口图标与任务栏支持 alpha |
+| 程序内品牌标 `BrandMark.png` | 透明 | 落在应用自己的背景上 |
+| 网页头部 logo / 浏览器标签页图标 `/brand.png` | 透明 | 页面深浅色自适应 |
+| Android 自适应图标**背景层** | 白色 `#FFFFFF` | 自适应图标背景必须不透明，系统会裁切成各种形状 |
+
+也就是说：**只有 Android 自适应图标的背景层用白色，其余全部透明。**
+
 ## 资产文件
 
-- `export/EZShare-final.svg` — 权威矢量源文件（512×512 viewBox）
-- `export/EZShare-final.png` — 渲染成品 1024×1024（RGBA）
+- `export/EZShare-final.svg` — 权威矢量源文件（512×512 viewBox，透明背景）
+- `export/EZShare-final.png` — 1024×1024 RGBA 成品（透明）
 - `export/EZShare-final-180.png` — 180px 预览（检查小尺寸可读性）
+- `export/BrandMark.png` — 256×256 程序内品牌标（透明）
+- `export/brand-web.png` — 160×160 网页 logo / favicon（透明）
+- `export/AppIcon.icns` / `export/AppIcon.ico` — macOS / Windows 图标
 
-## 重新渲染
+## 重新生成
 
 ```bash
-cd /Volumes/Mac-SSD-1/Dev/Project/EZLive00/EZShare/branding/export
-sips -s format png -z 1024 1024 EZShare-final.svg --out EZShare-final.png
-sips -z 180 180 EZShare-final.png --out EZShare-final-180.png
+python3 branding/render-icons.py
 ```
+
+脚本会自动：渲染 SVG（双背景反解 alpha，绕过 `sips` 把透明压成白色的问题）→ 生成 PNG/ICNS/ICO
+→ 分发到 `android/app/src/main/assets/brand.png`、`windows/EZShare/Assets/`、`android/.../mipmap-*`。
 
 ## 应用到项目
 
-当前仅为设计稿，未替换三端图标。应用时需同步：
-
-- macOS：`tools/make-icon.swift` 生成的 `build/Resources/AppIcon.icns`
-- Android：`android/app/src/main/res/drawable/ic_launcher.xml`
-- Windows：`EZShare.csproj` 的 `<ApplicationIcon>`
+- macOS：`scripts/build.sh` 复制 `export/AppIcon.icns` 与 `BrandMark.png`、`brand-web.png` 进 App Resources
+- Android：`res/mipmap-anydpi-v26/ic_launcher.xml`（白底）+ `res/drawable/ic_launcher_foreground.xml`（透明前景）
+- Windows：`EZShare.csproj` 的 `ApplicationIcon` 与 `EmbeddedResource`（AppIcon.ico / brand.png / BrandMark.png）

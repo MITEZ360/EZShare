@@ -2,6 +2,21 @@ import Foundation
 
 /// 内嵌的网页资源（无外部依赖，离线可用）。
 enum WebAssets {
+    /// 网页品牌标 / 浏览器标签页图标：透明 PNG，随 App 打包（branding/export/brand-web.png）
+    static func brandPNG() -> HTTPResponse {
+        if let cached = _brandPNG { return cached }
+        guard let url = Bundle.main.url(forResource: "brand-web", withExtension: "png"),
+              let data = try? Data(contentsOf: url) else { return .empty() }
+        let response = HTTPResponse(
+            status: 200,
+            headers: ["Content-Type": "image/png", "Cache-Control": "public, max-age=86400"],
+            body: .data(data)
+        )
+        _brandPNG = response
+        return response
+    }
+    private static var _brandPNG: HTTPResponse?
+
     static let css = #"""
 *,*::before,*::after{box-sizing:border-box}
 :root{
@@ -40,8 +55,8 @@ input{font-family:inherit;font-size:inherit}
 .topbar{position:sticky;top:0;z-index:30;background:var(--panel-soft);-webkit-backdrop-filter:saturate(150%) blur(16px);backdrop-filter:saturate(150%) blur(16px)}
 .topbar-inner{max-width:1120px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand .mark{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;background:var(--accent)}
-.brand .mark svg{width:19px;height:19px;stroke:#fff}
+.brand .mark{width:34px;height:34px;flex:none;display:block}
+.brand .mark img{width:100%;height:100%;display:block}
 .brand .title{font-size:15px;font-weight:600;letter-spacing:0;white-space:nowrap}
 .brand .sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:36vw}
 .spacer{flex:1}
@@ -157,8 +172,8 @@ footer .dot{width:4px;height:4px;border-radius:50%;background:currentColor;opaci
 /* ---------- login ---------- */
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
 .login{width:min(380px,92vw);background:var(--panel);border-radius:24px;box-shadow:0 16px 40px rgba(0,0,0,.10);padding:32px}
-.login .mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--accent);margin-bottom:20px}
-.login .mark svg{width:24px;height:24px;stroke:#fff}
+.login .mark{width:46px;height:46px;display:block;margin-bottom:20px}
+.login .mark img{width:100%;height:100%;display:block}
 .login h1{margin:0 0 4px;font-size:18px;font-weight:600}
 .login p{margin:0 0 22px;color:var(--muted);font-size:13px}
 .login input{width:100%;height:44px;padding:0 14px;border-radius:10px;border:0;background:var(--bg2);color:var(--text);outline:0;font-size:15px;letter-spacing:.3em;text-align:center}

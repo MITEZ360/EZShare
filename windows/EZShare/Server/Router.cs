@@ -38,7 +38,14 @@ namespace EZShare.Server
             var settings = _config.Snapshot;
             switch (request.Path)
             {
-                case "/favicon.ico": return HttpResponse.Text("", 204);
+                case "/brand.png":
+                case "/favicon.ico":
+                    {
+                        var png = WebAssets.BrandPng;
+                        var res = new HttpResponse { Status = 200, ContentType = "image/png", Body = png };
+                        res.Headers["Cache-Control"] = "public, max-age=86400";
+                        return res;
+                    }
                 case "/health": return HttpResponse.Text("ok");
                 case "/login":
                     if (request.Method == "POST") return HandleLogin(request, settings);

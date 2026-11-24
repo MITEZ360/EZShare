@@ -90,32 +90,17 @@ mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$BUILD_DIR/$APP_NAME" "$APP_DIR/Contents/MacOS/$APP_NAME"
 cp "$PROJECT_ROOT/packaging/Info.plist" "$APP_DIR/Contents/Info.plist"
 
-# 图标（从 branding 矢量源渲染的 PNG 生成，缓存一次）
-if [ ! -f "$BUILD_DIR/Resources/AppIcon.icns" ]; then
-  ICON_SRC="$PROJECT_ROOT/branding/export/EZShare-final.png"
-  if [ -f "$ICON_SRC" ]; then
-    ICONSET="$BUILD_DIR/AppIcon.iconset"
-    rm -rf "$ICONSET"; mkdir -p "$ICONSET"
-    python3 - "$ICON_SRC" "$ICONSET" <<'PY'
-import subprocess, sys
-src, dst = sys.argv[1], sys.argv[2]
-sizes = [16, 32, 64, 128, 256, 512, 1024]
-for s in sizes:
-    for suffix, out in ((f"{s}x{s}", s), (f"{s}x{s}@2x", s * 2)):
-        if out > 1024:
-            continue
-        target = f"{dst}/icon_{suffix}.png"
-        subprocess.run(["sips", "-z", str(out), str(out), src, "--out", target],
-                       check=True, capture_output=True)
-PY
-    mkdir -p "$BUILD_DIR/Resources"
-    iconutil -c icns "$ICONSET" -o "$BUILD_DIR/Resources/AppIcon.icns"
-  else
-    echo "[EZShare] 跳过图标生成：缺少 branding/export/EZShare-final.png"
-  fi
+# 图标：直接用 branding 渲染好的成品（含 alpha，Dock/Finder 显示为透明背景）
+# 重新生成：python3 branding/render-icons.py
+ICON="$PROJECT_ROOT/branding/export/AppIcon.icns"
+if [ -f "$ICON" ]; then
+  cp "$ICON" "$APP_DIR/Contents/Resources/AppIcon.icns"
+else
+  echo "[EZShare] 缺少 branding/export/AppIcon.icns，先运行 python3 branding/render-icons.py"
 fi
-[ -f "$BUILD_DIR/Resources/AppIcon.icns" ] && cp "$BUILD_DIR/Resources/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
-cp "$PROJECT_ROOT/android/app/src/main/res/drawable-nodpi/brand_mark.png" "$APP_DIR/Contents/Resources/BrandMark.png"
+cp "$PROJECT_ROOT/branding/export/BrandMark.png" "$APP_DIR/Contents/Resources/BrandMark.png"
+cp "$PROJECT_ROOT/branding/export/brand-web.png" "$APP_DIR/Contents/Resources/brand-web.png"
+
 
 # ---------------------------------------------------------------------------
 # 签名（ad-hoc，保证本机可直接运行并触发本地网络权限）

@@ -9,10 +9,10 @@
     <RootNamespace>EZShare</RootNamespace>
     <AssemblyName>EZShare</AssemblyName>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>0.0.10</Version>
-    <AssemblyVersion>0.0.10.0</AssemblyVersion>
-    <FileVersion>0.0.10.0</FileVersion>
-    <InformationalVersion>0.0.10</InformationalVersion>
+    <Version>0.0.11</Version>
+    <AssemblyVersion>0.0.11.0</AssemblyVersion>
+    <FileVersion>0.0.11.0</FileVersion>
+    <InformationalVersion>0.0.11</InformationalVersion>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Net.Http" />
@@ -27,8 +27,10 @@
   <ItemGroup>
     <Resource Include="Assets\BrandMark.png" />
     <EmbeddedResource Include="Assets\AppIcon.ico" LogicalName="EZShare.Assets.AppIcon.ico" />
+    <EmbeddedResource Include="Assets\brand.png" LogicalName="EZShare.Assets.brand.png" />
     <EmbeddedResource Include="Assets\web.css" LogicalName="EZShare.Assets.web.css" />
     <EmbeddedResource Include="Assets\web.js" LogicalName="EZShare.Assets.web.js" />
+    <None Include="Assets\brand.png" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Assets\web.css" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Assets\web.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

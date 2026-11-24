@@ -32,8 +32,8 @@ final class Router {
         let settings = config.snapshot()
 
         switch request.path {
-        case "/favicon.ico":
-            return .empty()
+        case "/brand.png", "/favicon.ico":
+            return WebAssets.brandPNG()
         case "/health":
             return .text("ok")
         case "/login":

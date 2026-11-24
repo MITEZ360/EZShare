@@ -3,11 +3,8 @@ import Foundation
 enum WebUI {
     // MARK: - 基础元素
 
-    static let brandMark = """
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">\
-    <path d="M12 15.5V4"/><path d="M7.8 8.2L12 4l4.2 4.2"/>\
-    <path d="M4.6 14v4.2a1.9 1.9 0 0 0 1.9 1.9h11a1.9 1.9 0 0 0 1.9-1.9V14"/></svg>
-    """
+    /// 品牌标直接用透明 PNG（/brand.png），与三端桌面图标同一份图形
+    static let brandMark = "<img src=\"/brand.png\" alt=\"\" width=\"34\" height=\"34\">"
 
     static func esc(_ text: String) -> String {
         text
@@ -79,6 +76,8 @@ enum WebUI {
         <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
         <title>\(esc(title))</title>
+        <link rel="icon" type="image/png" href="/brand.png">
+        <link rel="apple-touch-icon" href="/brand.png">
         <style>\(WebAssets.css)</style>
         </head>
         <body \(bodyAttributes)>

@@ -16,6 +16,8 @@ class WebUI(private val css: String, private val js: String) {
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>${esc(title)}</title>
+<link rel="icon" type="image/png" href="/brand.png">
+<link rel="apple-touch-icon" href="/brand.png">
 <style>$css</style>
 </head>
 <body $bodyAttributes>
@@ -176,7 +178,8 @@ $err
     }
 
     companion object {
-        private val brandMark = """<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4"/><path d="M7.8 8.2L12 4l4.2 4.2"/><path d="M4.6 14v4.2a1.9 1.9 0 0 0 1.9 1.9h11a1.9 1.9 0 0 0 1.9-1.9V14"/></svg>"""
+        /// 品牌标直接用透明 PNG（/brand.png），与桌面图标同一份图形
+        private val brandMark = """<img src="/brand.png" alt="" width="34" height="34">"""
         private val downloadIcon = """<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v10"/><path d="M8 11l4 3.5 4-3.5"/><path d="M5 18.5h14"/></svg>"""
         private val trashIcon = """<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 7h14.4"/><path d="M9.4 7V5.4a1.4 1.4 0 0 1 1.4-1.4h2.4a1.4 1.4 0 0 1 1.4 1.4V7"/><path d="M6.6 7l.8 11.2a1.8 1.8 0 0 0 1.8 1.6h5.6a1.8 1.8 0 0 0 1.8-1.6L17.4 7"/></svg>"""
         private val copyIcon = """<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5.5 14.5A1.8 1.8 0 0 1 4 12.7V5.8A1.8 1.8 0 0 1 5.8 4h6.9a1.8 1.8 0 0 1 1.8 1.5"/></svg>"""
